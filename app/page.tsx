@@ -57,17 +57,17 @@ const projects = [
   {
     title: "Modern Exterior Refresh",
     category: "Exterior project",
-    image: "/machine/project-1.jpg",
+    image: "/machine/project-01.jpg",
   },
   {
     title: "Premium Interior Finish",
     category: "Interior project",
-    image: "/machine/project-2.jpg",
+    image: "/machine/project-02.jpg",
   },
   {
     title: "Commercial Wall Finish",
     category: "Commercial project",
-    image: "/machine/project-3.jpg",
+    image: "/machine/project-03.jpg",
   },
 ];
 
@@ -281,64 +281,66 @@ export default function Home() {
       </section>
 
       {/* PROJECTS */}
-      <section id="projects" className="bg-white px-5 py-20 md:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center">
-            <p className="mb-4 text-[11px] font-extrabold uppercase tracking-[0.28em] text-[#008c8c]">
-              Portfolio
-            </p>
+<section id="projects" className="bg-white px-5 py-20 md:px-8">
+  <div className="mx-auto max-w-7xl">
+    <div className="text-center">
+      <p className="mb-4 text-[11px] font-extrabold uppercase tracking-[0.28em] text-[#008c8c]">
+        Portfolio
+      </p>
 
-            <h2 className="text-4xl font-black tracking-[-0.05em] text-[#07162d] md:text-5xl">
-              Recent Projects
-            </h2>
+      <h2 className="text-4xl font-black tracking-[-0.05em] text-[#07162d] md:text-5xl">
+        Recent Projects
+      </h2>
 
-            <div className="mt-7 flex flex-wrap justify-center gap-3">
-              {["All Work", "Interior", "Exterior", "Commercial", "Residential"].map(
-                (tab, index) => (
-                  <span
-                    key={tab}
-                    className={`rounded-full border px-5 py-2 text-xs font-semibold ${
-                      index === 0
-                        ? "border-[#07162d] bg-[#07162d] text-white"
-                        : "border-slate-200 bg-white text-slate-600"
-                    }`}
-                  >
-                    {tab}
-                  </span>
-                )
-              )}
-            </div>
-          </div>
+      <div className="mt-7 flex flex-wrap justify-center gap-3">
+        {["All Work", "Interior", "Exterior", "Commercial", "Residential"].map(
+          (tab, index) => (
+            <span
+              key={tab}
+              className={`rounded-full border px-5 py-2 text-xs font-semibold ${
+                index === 0
+                  ? "border-[#07162d] bg-[#07162d] text-white"
+                  : "border-slate-200 bg-white text-slate-600"
+              }`}
+            >
+              {tab}
+            </span>
+          )
+        )}
+      </div>
+    </div>
 
-          <div className="mx-auto mt-12 grid max-w-6xl gap-7 md:grid-cols-3">
-            {projects.map((project) => (
-              <article
-                key={project.title}
-                className="overflow-hidden border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
-              >
-                <div className="relative h-72">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover"
-                  />
-                </div>
+    <div className="mx-auto mt-12 grid max-w-6xl gap-7 md:grid-cols-3">
+  {projects.map((project) => (
+    <article
+      key={project.title}
+      className="overflow-hidden border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+    >
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
+        <Image
+          src={project.image}
+          alt={project.title}
+          fill
+          quality={100}
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover object-center"
+        />
+      </div>
 
-                <div className="p-6">
-                  <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#f97316]">
-                    {project.category}
-                  </p>
-                  <h3 className="mt-3 text-xl font-black tracking-[-0.03em] text-[#07162d]">
-                    {project.title}
-                  </h3>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      <div className="p-6">
+        <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#f97316]">
+          {project.category}
+        </p>
+
+        <h3 className="mt-3 text-xl font-black tracking-[-0.03em] text-[#07162d]">
+          {project.title}
+        </h3>
+      </div>
+    </article>
+  ))}
+</div>
+  </div>
+</section>
 
       {/* BEFORE / AFTER */}
       <section id="before-after" className="bg-[#07162d] px-5 py-20 text-white md:px-8">
