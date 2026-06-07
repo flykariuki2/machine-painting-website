@@ -67,7 +67,7 @@ const projects = [
   {
     title: "Commercial Wall Finish",
     category: "Commercial project",
-    image: "/machine/project-03.jpg",
+    image: "/machine/project-003.jpg",
   },
 ];
 
