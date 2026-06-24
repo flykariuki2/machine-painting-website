@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { FormEvent, useState } from "react";
 import Navbar from "@/components/Navbar";
 import ContactSection from "@/components/ContactSection";
 
@@ -33,43 +33,25 @@ const expectations = [
 export default function CareersPage() {
   const [fullName, setFullName] = useState("");
   const [age, setAge] = useState("");
-  const [location, setLocation] = useState("");
+  const [county, setCounty] = useState("");
   const [estate, setEstate] = useState("");
   const [phone, setPhone] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState("");
 
   const whatsappMessage = encodeURIComponent(
-    "Hello The Machine Painting Co Ltd, I would like to register as a painter."
+    "Hello The Machine Painting Co Ltd, I would like to ask about painter registration."
   );
 
   const canSubmit =
     fullName.trim() &&
     age.trim() &&
-    location.trim() &&
+    county.trim() &&
     estate.trim() &&
     phone.trim() &&
-    selectedSkills.length === 2;
-
-  const registrationMessage = useMemo(() => {
-    const lines = [
-      "Hello The Machine Painting Co Ltd, I would like to register as a painter.",
-      "",
-      `Name: ${fullName || "-"}`,
-      `Age: ${age || "-"}`,
-      `Location: ${location || "-"}`,
-      `Estate: ${estate || "-"}`,
-      `Tel No.: ${phone || "-"}`,
-      "",
-      "Skill Set:",
-      selectedSkills.length > 0
-        ? selectedSkills.map((skill, index) => `${index + 1}. ${skill}`).join("\n")
-        : "-",
-    ];
-
-    return encodeURIComponent(lines.join("\n"));
-  }, [fullName, age, location, estate, phone, selectedSkills]);
-
-  const registrationWhatsappLink = `https://wa.me/254785285828?text=${registrationMessage}`;
+    selectedSkills.length === 2 &&
+    !submitting;
 
   function toggleSkill(skill: string) {
     setSelectedSkills((current) => {
@@ -85,12 +67,67 @@ export default function CareersPage() {
     });
   }
 
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!canSubmit) {
+      setFeedback("Please fill all fields and select exactly two skills.");
+      return;
+    }
+
+    const webhookUrl = process.env.NEXT_PUBLIC_PAINTER_REGISTRATION_WEBHOOK;
+
+    if (!webhookUrl) {
+      setFeedback("Form is ready. Add the n8n webhook URL to activate submissions.");
+      return;
+    }
+
+    setSubmitting(true);
+    setFeedback("");
+
+    try {
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          submitted_at: new Date().toISOString(),
+          name: fullName.trim(),
+          age: age.trim(),
+          county: county.trim(),
+          estate: estate.trim(),
+          phone_number: phone.trim(),
+          skill_1: selectedSkills[0],
+          skill_2: selectedSkills[1],
+          status: "new",
+          source: "website_join_us_form",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Submission failed");
+      }
+
+      setFeedback("Application submitted successfully.");
+      setFullName("");
+      setAge("");
+      setCounty("");
+      setEstate("");
+      setPhone("");
+      setSelectedSkills([]);
+    } catch {
+      setFeedback("Submission failed. Please try again or contact the company directly.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <main className="overflow-hidden bg-[#f8f8f5] pt-[76px] text-[#043079]">
       <Navbar />
 
-      {/* HERO */}
-      <section className="bg-[#043079] px-5 py-20 text-white md:px-8">
+      <section className="bg-[#043079] px-5 py-14 text-white md:px-8">
         <div className="mx-auto max-w-7xl">
           <p className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.28em] text-[#f5b400]">
             Join Us
@@ -124,7 +161,6 @@ export default function CareersPage() {
         </div>
       </section>
 
-      {/* OVERVIEW */}
       <section id="requirements" className="bg-white px-5 py-20 md:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 max-w-3xl">
@@ -133,7 +169,7 @@ export default function CareersPage() {
             </p>
 
             <h2 className="text-4xl font-black leading-tight tracking-[-0.05em] text-[#043079] md:text-5xl">
-              Help us understand your location, contact details, and strongest skills.
+              Help us understand your county, estate, contact details, and strongest skills.
             </h2>
 
             <p className="mt-5 text-sm leading-7 text-slate-600">
@@ -164,7 +200,6 @@ export default function CareersPage() {
         </div>
       </section>
 
-      {/* REGISTRATION FORM */}
       <section id="register" className="bg-[#f8f8f5] px-5 py-20 md:px-8">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           <div>
@@ -182,15 +217,13 @@ export default function CareersPage() {
             </p>
 
             <div className="mt-7 border-l-4 border-[#f5b400] bg-white p-5 text-sm leading-7 text-slate-600">
-              <strong className="block text-[#043079]">
-                Important:
-              </strong>
+              <strong className="block text-[#043079]">Important:</strong>
               Select exactly two skills. You cannot submit with fewer or more
               than two skill areas.
             </div>
           </div>
 
-          <form className="bg-white p-6 text-slate-800 shadow-2xl">
+          <form onSubmit={handleSubmit} className="bg-white p-6 text-slate-800 shadow-2xl">
             <div className="grid gap-4 sm:grid-cols-2">
               <input
                 value={fullName}
@@ -208,9 +241,9 @@ export default function CareersPage() {
               />
 
               <input
-                value={location}
-                onChange={(event) => setLocation(event.target.value)}
-                placeholder="Location"
+                value={county}
+                onChange={(event) => setCounty(event.target.value)}
+                placeholder="County"
                 className="h-11 border border-[#043079]/30 bg-white px-4 text-sm text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
               />
 
@@ -232,9 +265,7 @@ export default function CareersPage() {
             <div className="mt-6">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <p className="text-sm font-black text-[#043079]">
-                    Skill Set
-                  </p>
+                  <p className="text-sm font-black text-[#043079]">Skill Set</p>
                   <p className="mt-1 text-xs leading-5 text-slate-500">
                     Select exactly two skills.
                   </p>
@@ -242,9 +273,7 @@ export default function CareersPage() {
 
                 <span
                   className={`text-xs font-extrabold ${
-                    selectedSkills.length === 2
-                      ? "text-[#043079]"
-                      : "text-[#cc0f06]"
+                    selectedSkills.length === 2 ? "text-[#043079]" : "text-[#cc0f06]"
                   }`}
                 >
                   {selectedSkills.length}/2 selected
@@ -281,22 +310,23 @@ export default function CareersPage() {
               </div>
             </div>
 
-            <a
-              href={canSubmit ? registrationWhatsappLink : undefined}
-              target={canSubmit ? "_blank" : undefined}
-              rel={canSubmit ? "noreferrer" : undefined}
-              aria-disabled={!canSubmit}
-              onClick={(event) => {
-                if (!canSubmit) event.preventDefault();
-              }}
+            <button
+              type="submit"
+              disabled={!canSubmit}
               className={`mt-6 inline-flex w-full items-center justify-center px-6 py-3.5 text-[11px] font-extrabold uppercase tracking-[0.14em] transition-colors duration-200 ${
                 canSubmit
                   ? "bg-[#043079] text-white hover:bg-[#f5b400] hover:text-[#043079]"
                   : "cursor-not-allowed bg-slate-200 text-slate-500"
               }`}
             >
-              Submit Registration on WhatsApp
-            </a>
+              {submitting ? "Submitting..." : "Submit Application"}
+            </button>
+
+            {feedback && (
+              <p className="mt-3 text-center text-xs font-semibold leading-5 text-[#043079]">
+                {feedback}
+              </p>
+            )}
 
             <p className="mt-3 text-center text-xs leading-5 text-slate-500">
               Suitable applicants may be contacted when a relevant project
