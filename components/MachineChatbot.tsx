@@ -1,439 +1,484 @@
 "use client";
 
-import { FormEvent, MouseEvent, useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { Bot, Send, X } from "lucide-react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+} from "react";
 
-type Message = {
-  from: "bot" | "user";
+interface Message {
+  id: string;
+  sender: "bot" | "user";
   text: string;
-};
+  time: string;
+}
 
-type ChatTopic = {
-  label: string;
+interface ChatRule {
   keywords: string[];
   response: string;
-};
+}
 
-const chatTopics: ChatTopic[] = [
+const formatTime = () =>
+  new Date().toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+const fallbackResponse =
+  "I do not have enough confirmed information to answer that accurately. Please use the green WhatsApp button to speak directly with The Machine Painting Co Ltd team on 0785 285 828.";
+
+const chatRules: ChatRule[] = [
   {
-    label: "Services",
+    keywords: ["hello", "hi", "hey", "jambo", "good morning", "good afternoon"],
+    response:
+      "Jambo! I can help with painting services, paint packages, quotations, site visits, project videos, the gallery, painter registration, and company contact details. What would you like to know?",
+  },
+  {
     keywords: [
-      "service",
+      "what do you do",
+      "what does the company do",
       "services",
-      "painting",
-      "interior",
-      "exterior",
-      "spray",
-      "sprayer",
-      "machine",
-      "skimming",
-      "surface",
-      "preparation",
-      "commercial",
-      "renovation",
-      "walls",
-      "finish",
-      "finishing",
+      "service",
+      "painting services",
     ],
     response:
-      "The Machine Painting Co Ltd offers interior painting, exterior painting, machine spray painting, wall skimming / surface preparation, commercial painting, and renovation painting. These services support homes, offices, apartments, buildings, warehouses, and commercial projects.",
+      "The Machine Painting Co Ltd provides interior painting, exterior painting, machine spray painting, commercial painting, renovation painting, wall skimming, surface preparation, repairs, finishing, and professional project handover.",
   },
   {
-    label: "Paint Packages",
     keywords: [
-      "package",
-      "packages",
-      "paint package",
-      "one day",
-      "commercial package",
-      "paint for free",
-      "pricing package",
-      "options",
+      "machine spray painting",
+      "spray painting",
+      "spray paint",
+      "machine painting",
     ],
     response:
-      "The main paint packages are One Day Painting, Commercial Painting, and Paint for Free. One Day Painting is ideal for faster refresh projects, Commercial Painting supports offices and business premises, and Paint for Free is a flexible project option discussed during quotation or site assessment.",
+      "Machine spray painting uses professional spray equipment to apply paint efficiently and evenly. It is especially suitable for larger surfaces and helps achieve smoother, more consistent coverage with fewer visible brush marks.",
   },
   {
-    label: "Quotation",
+    keywords: ["interior painting", "inside painting", "indoor painting"],
+    response:
+      "Interior painting covers homes, rooms, apartments, offices, and interior commercial spaces. The team focuses on surface preparation, smooth application, clean edges, consistent coverage, and a neat handover.",
+  },
+  {
+    keywords: ["exterior painting", "outside painting", "external walls"],
+    response:
+      "Exterior painting is available for homes, apartments, buildings, offices, and commercial properties. The work is planned around surface condition, preparation, access, weather exposure, finish expectations, and durability.",
+  },
+  {
+    keywords: ["commercial painting", "warehouse", "factory", "office painting"],
+    response:
+      "Commercial painting is available for offices, apartments, buildings, warehouses, factories, and business premises. Machine spray painting may be used where suitable to improve speed and consistency across larger surfaces.",
+  },
+  {
+    keywords: ["renovation", "repainting", "makeover", "property refresh"],
+    response:
+      "The company supports renovation painting, property refreshes, repainting work, office conversions, apartment makeovers, surface repairs, preparation, finishing, and clean project handover.",
+  },
+  {
+    keywords: [
+      "wall skimming",
+      "skimming",
+      "surface preparation",
+      "prepare walls",
+      "wall repair",
+      "primer",
+    ],
+    response:
+      "Surface preparation may include cleaning, smoothing, wall skimming, repairs, protection of surrounding areas, and priming where required. Proper preparation helps produce a cleaner and more durable final finish.",
+  },
+  {
+    keywords: [
+      "residential",
+      "home",
+      "house",
+      "apartment",
+      "villa",
+      "townhouse",
+    ],
+    response:
+      "Yes. The company handles residential projects including homes, rooms, apartments, villas, townhouses, exterior walls, interior spaces, repainting, and renovation projects.",
+  },
+  {
+    keywords: ["paint packages", "packages", "package options"],
+    response:
+      "The main paint packages are One Day Painting, Commercial Painting, and Paint for Free. The most suitable option depends on the project size, property type, surface condition, preparation work, timeline, access, and expected finish.",
+  },
+  {
+    keywords: ["one day painting", "one day package", "fast painting"],
+    response:
+      "One Day Painting is intended for suitable quick-refresh projects where speed and neatness matter. It can work for rooms, homes, or offices, subject to the project size, surface condition, preparation required, and site assessment.",
+  },
+  {
+    keywords: ["paint for free", "free painting", "paint free"],
+    response:
+      "Paint for Free is a flexible project option discussed during quotation or site assessment. The final arrangement depends on the project scope, requirements, eligibility, and approval. Please contact the team on WhatsApp for the exact terms.",
+  },
+  {
+    keywords: [
+      "commercial package",
+      "business package",
+      "commercial painting package",
+    ],
+    response:
+      "The Commercial Painting package supports offices, apartments, buildings, warehouses, factories, and other business premises. The scope may include interior work, exterior work, preparation, and machine spray painting where suitable.",
+  },
+  {
     keywords: [
       "quote",
       "quotation",
       "estimate",
-      "cost",
-      "price",
       "pricing",
-      "charges",
+      "price",
+      "cost",
       "how much",
-      "budget",
-      "ksh",
-      "kes",
+      "charges",
+      "rate",
     ],
     response:
-      "You can request a quotation using the Project Request form at the bottom of the page. Select 'Get a Quotation', add your name, phone number, project location, service needed, preferred date if applicable, and project details. The final quotation depends on surface condition, preparation work, access, and project scope.",
+      "You can request a working estimate or detailed quotation through the website quotation form. Final pricing depends on measurements, surface condition, preparation work, access, paint system, location, finish requirements, and project scope.",
   },
   {
-    label: "Site Visit",
+    keywords: ["calculator", "estimator", "instant estimate", "budget"],
+    response:
+      "The homepage includes an instant cost estimator for early budget guidance. Enter the approximate wall dimensions, surface type, and finish type. The displayed amount is a working estimate; final pricing is confirmed after reviewing the actual project.",
+  },
+  {
+    keywords: ["site visit", "site assessment", "visit my site", "inspection"],
+    response:
+      "Yes. You can book a site visit before the final quotation. The assessment helps the team review measurements, access, surface condition, preparation requirements, project scope, and the expected finish.",
+  },
+  {
     keywords: [
-      "site visit",
-      "visit",
-      "assessment",
-      "book",
-      "booking",
-      "inspection",
-      "measure",
-      "measurements",
-      "location",
-      "come to site",
+      "quote and site visit",
+      "quotation and site visit",
+      "both quotation and site visit",
     ],
     response:
-      "You can book a site visit using the Project Request form at the bottom of the page. Select 'Book a Site Visit', then add your project location, preferred site visit date, service needed, and project details so the team can plan the next step.",
+      "Yes. The website form supports both quotation requests and site-visit bookings. You can select the request type and provide your service, location, preferred date, contact details, and project information.",
   },
   {
-    label: "Gallery",
-    keywords: [
-      "gallery",
-      "photos",
-      "pictures",
-      "images",
-      "before",
-      "after",
-      "transformation",
-      "portfolio images",
-      "work photos",
-    ],
-    response:
-      "The Gallery page shows before-and-after transformations, including exterior refreshes, residential finishes, wall transformations, multi-angle before images, and completed painting results. It is useful if you want to see visual proof of finish quality.",
-  },
-  {
-    label: "Projects",
-    keywords: [
-      "projects",
-      "project",
-      "videos",
-      "youtube",
-      "westlands",
-      "kihingo",
-      "kitsuru",
-      "kileleshwa",
-      "renovations",
-      "office renovation",
-      "villa",
-      "apartment",
-    ],
-    response:
-      "The Projects page includes video projects such as Westlands Office Renovations, Kihingo Village Kitsuru Villa, and Kileleshwa Apartment 360 Renovations. Key facts include Westlands office work covering about 288 sqm, Kihingo Village’s 5500 sqft townhouse on 0.7 acres, and Kileleshwa’s full 360 apartment makeover.",
-  },
-  {
-    label: "About",
-    keywords: [
-      "about",
-      "company",
-      "who are you",
-      "who we are",
-      "machine painting",
-      "brand",
-      "tagline",
-      "beautiful structures",
-      "sprayed perfectly",
-    ],
-    response:
-      "The Machine Painting Co Ltd is a professional painting and finishing company built around clean execution, modern painting methods, surface preparation, and strong final presentation. The company promise is: Beautiful Structures, Sprayed Perfectly.",
-  },
-  {
-    label: "Process",
     keywords: [
       "process",
-      "steps",
       "how it works",
-      "how do you work",
-      "procedure",
-      "prepare",
-      "primer",
-      "application",
-      "inspection",
-      "handover",
+      "painting process",
+      "project process",
+      "steps",
     ],
     response:
-      "The process usually starts with consultation or assessment, followed by quotation guidance, surface preparation, paint application, final inspection, and clean handover. Good preparation is important because the final finish depends on the condition of the surface before painting begins.",
+      "The standard process is: consultation, quotation or site assessment, surface preparation, paint application, final inspection, and clean handover. The exact process may vary according to the surface and project scope.",
   },
   {
-    label: "Join Us",
+    keywords: ["how long", "timeline", "duration", "turnaround", "completion"],
+    response:
+      "Project duration depends on the property size, surface condition, preparation work, access, weather, paint system, and required finish. Suitable quick-refresh projects may qualify for One Day Painting, while larger renovations require a longer schedule.",
+  },
+  {
+    keywords: ["gallery", "before and after", "transformations", "photos"],
+    response:
+      "The Gallery page contains before-and-after transformations showing exterior repaints, residential refreshes, wall-finish improvements, multi-angle projects, and completed property repaint results.",
+  },
+  {
     keywords: [
-      "join",
+      "projects",
+      "project videos",
+      "videos",
+      "youtube",
+      "portfolio",
+    ],
+    response:
+      "The Projects page includes video case studies such as Westlands Office Renovations, Kihingo Village Kitsuru Villa, and Kileleshwa Apartment 360 Renovations. Select a project card to open its YouTube video.",
+  },
+  {
+    keywords: ["westlands project", "westlands office"],
+    response:
+      "The Westlands Office Renovations project involved subdividing part of an existing hall to create an additional office space. The covered area was approximately 288 square metres.",
+  },
+  {
+    keywords: ["kihingo", "kitsuru villa", "kitsuru project"],
+    response:
+      "The Kihingo Village Kitsuru project involved renovation and painting work on a modern 5,500-square-foot, four-bedroom ensuite townhouse on approximately 0.7 acres. The work took almost eight weeks.",
+  },
+  {
+    keywords: ["kileleshwa", "apartment 360", "kileleshwa apartment"],
+    response:
+      "The Kileleshwa Apartment 360 Renovations project included kitchen cabinets, granite countertops and floors, bathroom tiling, ceiling improvements, floor varnishing, and final painting works.",
+  },
+  {
+    keywords: [
+      "join us",
       "career",
       "careers",
-      "register",
-      "painter",
-      "crew",
-      "worker",
       "job",
-      "work",
-      "employment",
-      "skill",
-      "skills",
-      "sprayer",
-      "skimming",
-      "masonry",
-      "electrical",
-      "plumbing",
+      "painter registration",
+      "register as a painter",
+      "work with you",
     ],
     response:
-      "Painters and skilled crew members can register on the Join Us page. The registration form asks for name, age, location, estate, phone number, and exactly two skill selections. Skill options include Interior & Exterior Wall Painting, Special Effect, Wallmaster, Masonry Works, Sprayer, Skimming, Electrical Works, and Plumbing Works.",
+      "Painters and skilled crew members can register through the Join Us page. Applicants provide their details and select exactly two skill areas during registration.",
   },
   {
-    label: "Contact",
+    keywords: ["location", "address", "office", "where are you located"],
+    response:
+      "The head office is at Kasuku Villas, Umoja Road off Magadi Road, Nairobi, Kenya.",
+  },
+  {
     keywords: [
-      "contact",
       "phone",
+      "telephone",
       "call",
-      "whatsapp",
-      "email",
-      "number",
-      "reach",
-      "location",
-      "nairobi",
+      "contact number",
+      "whatsapp number",
+      "contact details",
     ],
     response:
-      "You can contact The Machine Painting Co Ltd through WhatsApp or phone on 0785 285 828. You can also email themachinepainting@gmail.com. The company is based in Nairobi, Kenya.",
+      "WhatsApp or call 0785 285 828. Other telephone contacts are +254 719 383 020 and +254 720 945 088. You can also use the green WhatsApp button on this page.",
+  },
+  {
+    keywords: ["email", "email address"],
+    response:
+      "You can email info@themachinepainting.com or themachinepainting@gmail.com.",
+  },
+  {
+    keywords: ["whatsapp", "speak to someone", "human", "agent", "representative"],
+    response:
+      "Use the green WhatsApp button to speak directly with the team, or contact them on 0785 285 828.",
+  },
+  {
+    keywords: ["nairobi", "service area", "areas covered", "where do you work"],
+    response:
+      "The company is based in Nairobi and handles residential, commercial, and renovation projects. For confirmation that your specific location is covered, please send the location through WhatsApp on 0785 285 828.",
+  },
+  {
+    keywords: ["opening hours", "working hours", "what time", "open today"],
+    response:
+      "The website does not publish confirmed operating hours. Please use the green WhatsApp button or contact 0785 285 828 to confirm availability.",
+  },
+  {
+    keywords: ["paint brand", "paint brands", "colour", "color", "which paint"],
+    response:
+      "Paint selection depends on the surface, location, expected finish, durability requirements, and budget. Please share the project details on WhatsApp so the team can recommend an appropriate paint system.",
+  },
+  {
+    keywords: ["thank you", "thanks", "asante"],
+    response:
+      "You’re welcome. You can ask another question or use the green WhatsApp button whenever you are ready to discuss your project directly with the team.",
   },
 ];
 
-const fallbackResponse =
-  "I can help with services, paint packages, quotations, site visits, gallery transformations, project videos, company information, process, painter registration, and contact details. Try asking something like 'How do I get a quote?', 'Do you offer site visits?', or 'Show me your projects.'";
+const normalizeText = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
-function findResponse(input: string) {
-  const normalizedInput = input.toLowerCase().trim();
+const getBotResponse = (question: string) => {
+  const normalizedQuestion = normalizeText(question);
 
-  if (!normalizedInput) return fallbackResponse;
+  const matchingRule = chatRules
+    .map((rule) => ({
+      rule,
+      score: rule.keywords.reduce((total, keyword) => {
+        const normalizedKeyword = normalizeText(keyword);
 
-  const matchedTopic = chatTopics.find((topic) =>
-    topic.keywords.some((keyword) =>
-      normalizedInput.includes(keyword.toLowerCase())
-    )
-  );
+        if (!normalizedQuestion.includes(normalizedKeyword)) {
+          return total;
+        }
 
-  return matchedTopic?.response || fallbackResponse;
-}
+        return total + normalizedKeyword.split(" ").length;
+      }, 0),
+    }))
+    .filter((match) => match.score > 0)
+    .sort((first, second) => second.score - first.score)[0];
+
+  return matchingRule?.rule.response ?? fallbackResponse;
+};
 
 export default function MachineChatbot() {
-  const pathname = usePathname();
-
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [typing, setTyping] = useState(false);
+
   const [messages, setMessages] = useState<Message[]>([
     {
-      from: "bot",
-      text: "Hi! I can help you with services, paint packages, quotations, site visits, gallery, projects, painter registration, and contact details.",
+      id: "welcome",
+      sender: "bot",
+      text: "Jambo! Welcome to The Machine Painting Co. I can help with services, packages, quotations, site visits, projects, gallery work, painter registration, and contact details. How may I assist you?",
+      time: formatTime(),
     },
   ]);
 
-  const latestMessageRef = useRef<HTMLDivElement | null>(null);
-  const typingRef = useRef<HTMLDivElement | null>(null);
-  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const responseTimerRef = useRef<number | null>(null);
 
-  const quoteHref = pathname === "/" ? "#quote" : `${pathname}#quote`;
-
-  function scrollToLatestMessage() {
-    requestAnimationFrame(() => {
-      if (typing) {
-        typingRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-        });
-
-        return;
-      }
-
-      latestMessageRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+  const scrollToLatestMessage = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
     });
-  }
+  }, []);
 
   useEffect(() => {
-    scrollToLatestMessage();
-  }, [messages, typing, open]);
+    if (isOpen) {
+      scrollToLatestMessage();
+    }
+  }, [isOpen, messages, scrollToLatestMessage]);
 
   useEffect(() => {
     return () => {
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current);
+      if (responseTimerRef.current !== null) {
+        window.clearTimeout(responseTimerRef.current);
       }
     };
   }, []);
 
-  function closeWhenOutside(event: MouseEvent<HTMLDivElement>) {
-    if (event.target === event.currentTarget) {
-      setOpen(false);
-    }
-  }
-
-  function replyWithDelay(userText: string, botResponse: string) {
-    if (typingTimeoutRef.current) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-
-    setMessages((current) => [...current, { from: "user", text: userText }]);
-    setTyping(true);
-
-    typingTimeoutRef.current = setTimeout(() => {
-      setMessages((current) => [...current, { from: "bot", text: botResponse }]);
-      setTyping(false);
-    }, 1200);
-  }
-
-  function handleQuickReply(topic: ChatTopic) {
-    if (typing) return;
-
-    replyWithDelay(topic.label, topic.response);
-  }
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const handleSend = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const userText = input.trim();
+    const cleanInput = input.trim();
 
-    if (!userText || typing) return;
+    if (!cleanInput) {
+      return;
+    }
 
+    const userMessage: Message = {
+      id: `user-${Date.now()}`,
+      sender: "user",
+      text: cleanInput,
+      time: formatTime(),
+    };
+
+    setMessages((current) => [...current, userMessage]);
     setInput("");
-    replyWithDelay(userText, findResponse(userText));
-  }
+
+    if (responseTimerRef.current !== null) {
+      window.clearTimeout(responseTimerRef.current);
+    }
+
+    responseTimerRef.current = window.setTimeout(() => {
+      const botResponse: Message = {
+        id: `bot-${Date.now()}`,
+        sender: "bot",
+        text: getBotResponse(cleanInput),
+        time: formatTime(),
+      };
+
+      setMessages((current) => [...current, botResponse]);
+      responseTimerRef.current = null;
+    }, 800);
+  };
 
   return (
-    <>
-      {open && (
-        <div
-          onMouseDown={closeWhenOutside}
-          className="fixed inset-0 z-[60] bg-transparent"
+    <div className="fixed bottom-[max(1.25rem,env(safe-area-inset-bottom))] right-5 z-[60]">
+      {!isOpen && (
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          aria-label="Open Machine Assistant chat"
+          aria-expanded="false"
+          title="Machine Assistant"
+          className="flex h-[56px] w-[56px] flex-col items-center justify-center rounded-full bg-[#f5b400] text-[#043079] shadow-[0_14px_35px_rgba(245,180,0,0.35)] transition duration-200 hover:-translate-y-1 hover:scale-105 hover:bg-[#ffc62f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#f5b400]"
         >
-          <div className="fixed bottom-24 right-5 top-[92px] flex w-[calc(100vw-40px)] max-w-[380px] flex-col overflow-hidden border border-[#043079]/10 bg-white shadow-2xl md:right-6">
-            {/* HEADER */}
-            <div className="shrink-0 bg-[#043079] px-5 py-4 text-white">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-[10px] font-extrabold uppercase tracking-[0.24em] text-[#f5b400]">
-                    The Machine Assistant
-                  </p>
+          <Bot aria-hidden="true" className="h-5 w-5" />
 
-                  <h3 className="mt-1 text-lg font-black tracking-[-0.03em]">
-                    How can we help?
-                  </h3>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  className="grid h-8 w-8 place-items-center border border-white/20 text-lg leading-none text-white transition hover:bg-white hover:text-[#043079]"
-                  aria-label="Close chatbot"
-                >
-                  ×
-                </button>
-              </div>
-            </div>
-
-            {/* MESSAGES */}
-            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-[#f8f8f5] p-4">
-              {messages.map((message, index) => {
-                const isLatestMessage = index === messages.length - 1;
-
-                return (
-                  <div
-                    key={`${message.from}-${index}`}
-                    ref={isLatestMessage ? latestMessageRef : null}
-                    className={`max-w-[90%] scroll-mt-4 px-4 py-3 text-sm leading-6 ${
-                      message.from === "bot"
-                        ? "bg-white text-slate-700 shadow-sm"
-                        : "ml-auto bg-[#043079] text-white"
-                    }`}
-                  >
-                    {message.text}
-                  </div>
-                );
-              })}
-
-              {typing && (
-                <div
-                  ref={typingRef}
-                  className="max-w-[90%] bg-white px-4 py-3 text-sm leading-6 text-slate-600 shadow-sm"
-                >
-                  <span className="font-semibold text-[#043079]">
-                    The Machine Assistant
-                  </span>{" "}
-                  is typing...
-                </div>
-              )}
-            </div>
-
-            {/* QUICK TOPICS */}
-            <div className="shrink-0 border-t border-[#043079]/10 bg-white px-3 py-3">
-              <div className="flex gap-2 overflow-x-auto pb-1">
-                {chatTopics.map((topic) => (
-                  <button
-                    key={topic.label}
-                    type="button"
-                    disabled={typing}
-                    onClick={() => handleQuickReply(topic)}
-                    className="shrink-0 border border-[#043079]/15 bg-white px-3 py-2 text-[10px] font-extrabold text-[#043079] transition hover:border-[#cc0f06] hover:text-[#cc0f06] disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {topic.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* INPUT */}
-            <form
-              onSubmit={handleSubmit}
-              className="shrink-0 border-t border-[#043079]/10 bg-white p-3"
-            >
-              <div className="flex gap-2">
-                <input
-                  value={input}
-                  onChange={(event) => setInput(event.target.value)}
-                  placeholder="Type a keyword or question..."
-                  className="min-w-0 flex-1 border border-[#043079]/20 px-3 py-3 text-sm text-slate-900 outline-none transition focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
-                />
-
-                <button
-                  type="submit"
-                  disabled={typing || !input.trim()}
-                  className="bg-[#cc0f06] px-4 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition hover:bg-[#a90d06] disabled:cursor-not-allowed disabled:bg-slate-300"
-                >
-                  Send
-                </button>
-              </div>
-
-              <a
-                href={quoteHref}
-                onClick={() => setOpen(false)}
-                className="mt-3 inline-flex w-full items-center justify-center bg-[#043079] px-5 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition hover:bg-[#f5b400] hover:text-[#043079]"
-              >
-                Open Request Form
-              </a>
-            </form>
-          </div>
-        </div>
+          <span className="mt-0.5 text-[7px] font-black uppercase leading-none tracking-[0.08em]">
+            Chat
+          </span>
+        </button>
       )}
 
-      <button
-        type="button"
-        onClick={() => setOpen((value) => !value)}
-        className="fixed bottom-6 right-6 z-[55] flex h-12 w-12 flex-col items-center justify-center rounded-full bg-[#f5b400] text-[#043079] shadow-2xl shadow-yellow-500/30 transition hover:scale-105 hover:bg-white"
-        aria-label="Open chatbot"
-      >
-        {open ? (
-          <span className="text-xl font-black leading-none">×</span>
-        ) : (
-          <>
-            <span className="text-[15px] leading-none">💬</span>
-            <span className="mt-[1px] text-[8px] font-black uppercase leading-none tracking-[0.04em]">
-              Chat
-            </span>
-          </>
-        )}
-      </button>
-    </>
+      {isOpen && (
+        <section
+          aria-label="Machine Assistant chat"
+          className="flex h-[min(500px,calc(100svh-7rem))] w-[calc(100vw-2rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-[#043079]/15 bg-white shadow-2xl"
+        >
+          <header className="flex items-center justify-between border-b border-white/10 bg-[#043079] p-4 text-white">
+            <div className="flex items-center gap-3">
+              <div className="grid h-9 w-9 place-items-center rounded-full bg-[#f5b400] text-[#043079]">
+                <Bot aria-hidden="true" className="h-5 w-5" />
+              </div>
+
+              <div>
+                <h2 className="text-sm font-extrabold">
+                  Machine Assistant
+                </h2>
+
+                <p className="mt-0.5 text-[10px] font-semibold text-white/70">
+                  Online assistance
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              aria-label="Close Machine Assistant"
+              className="grid h-9 w-9 place-items-center rounded-full text-white/75 transition hover:bg-white/10 hover:text-white"
+            >
+              <X aria-hidden="true" className="h-5 w-5" />
+            </button>
+          </header>
+
+          <div className="flex-1 space-y-3 overflow-y-auto bg-slate-50 p-4">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={[
+                  "flex flex-col",
+                  message.sender === "user"
+                    ? "items-end"
+                    : "items-start",
+                ].join(" ")}
+              >
+                <div
+                  className={[
+                    "max-w-[84%] rounded-xl px-3.5 py-2.5 text-[13px] leading-5",
+                    message.sender === "user"
+                      ? "rounded-br-none bg-[#043079] text-white"
+                      : "rounded-bl-none border border-slate-200 bg-white text-slate-700 shadow-sm",
+                  ].join(" ")}
+                >
+                  {message.text}
+                </div>
+
+                <span className="mt-1 px-1 text-[9px] text-slate-400">
+                  {message.time}
+                </span>
+              </div>
+            ))}
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          <form
+            onSubmit={handleSend}
+            className="flex gap-2 border-t border-slate-200 bg-white p-3"
+          >
+            <label htmlFor="machine-chat-input" className="sr-only">
+              Message
+            </label>
+
+            <input
+              id="machine-chat-input"
+              type="text"
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              placeholder="Ask about painting or pricing..."
+              autoComplete="off"
+              className="min-w-0 flex-1 rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-[#043079] outline-none transition focus:border-[#f5b400]"
+            />
+
+            <button
+              type="submit"
+              aria-label="Send message"
+              className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[#043079] text-white transition hover:bg-[#0453b1]"
+            >
+              <Send aria-hidden="true" className="h-4 w-4" />
+            </button>
+          </form>
+        </section>
+      )}
+    </div>
   );
 }

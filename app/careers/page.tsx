@@ -2,7 +2,6 @@
 
 import { FormEvent, useState } from "react";
 import Navbar from "@/components/Navbar";
-import ContactSection from "@/components/ContactSection";
 
 const skills = [
   "Interior & Exterior Wall Painting",
@@ -40,10 +39,6 @@ export default function CareersPage() {
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState("");
 
-  const whatsappMessage = encodeURIComponent(
-    "Hello The Machine Painting Co Ltd, I would like to ask about painter registration."
-  );
-
   const canSubmit =
     fullName.trim() &&
     age.trim() &&
@@ -75,10 +70,13 @@ export default function CareersPage() {
       return;
     }
 
-    const webhookUrl = process.env.NEXT_PUBLIC_PAINTER_REGISTRATION_WEBHOOK;
+    const webhookUrl =
+      process.env.NEXT_PUBLIC_PAINTER_REGISTRATION_WEBHOOK;
 
     if (!webhookUrl) {
-      setFeedback("Form is ready. Add the n8n webhook URL to activate submissions.");
+      setFeedback(
+        "Form is ready. Add the n8n webhook URL to activate submissions.",
+      );
       return;
     }
 
@@ -117,7 +115,9 @@ export default function CareersPage() {
       setPhone("");
       setSelectedSkills([]);
     } catch {
-      setFeedback("Submission failed. Please try again or contact the company directly.");
+      setFeedback(
+        "Submission failed. Please try again or contact the company directly.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -127,17 +127,18 @@ export default function CareersPage() {
     <main className="overflow-hidden bg-[#f8f8f5] pt-[76px] text-[#043079]">
       <Navbar />
 
+      {/* HERO */}
       <section className="bg-[#043079] px-5 py-14 text-white md:px-8">
         <div className="mx-auto max-w-7xl">
           <p className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.28em] text-[#f5b400]">
             Join Us
           </p>
 
-          <h1 className="max-w-4xl text-[38px] font-black leading-[1.02] tracking-[-0.05em] text-white md:text-6xl">
+          <h1 className="max-w-4xl text-[36px] font-black leading-[1.03] tracking-[-0.05em] text-white">
             Register as a Painter or Skilled Crew Member
           </h1>
 
-          <p className="mt-6 max-w-2xl text-sm font-medium leading-7 text-white/80">
+          <p className="mt-6 max-w-2xl text-[15px] font-normal leading-7 text-white/80">
             The Machine Painting Co Ltd is building a painter and crew database
             for future project opportunities. Submit your details and select
             exactly two skill areas.
@@ -161,6 +162,7 @@ export default function CareersPage() {
         </div>
       </section>
 
+      {/* REQUIREMENTS */}
       <section id="requirements" className="bg-white px-5 py-20 md:px-8">
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 max-w-3xl">
@@ -168,11 +170,12 @@ export default function CareersPage() {
               Painter Database
             </p>
 
-            <h2 className="text-4xl font-black leading-tight tracking-[-0.05em] text-[#043079] md:text-5xl">
-              Help us understand your county, estate, contact details, and strongest skills.
+            <h2 className="text-[33px] font-extrabold leading-tight tracking-[-0.05em] text-[#043079]">
+              Help us understand your county, estate, contact details, and
+              strongest skills.
             </h2>
 
-            <p className="mt-5 text-sm leading-7 text-slate-600">
+            <p className="mt-5 text-[15px] font-normal leading-7 text-slate-600">
               This registration helps the company keep an organized record of
               painters and skilled tradespeople who may be considered for future
               painting, finishing, repair, and site support work.
@@ -187,11 +190,11 @@ export default function CareersPage() {
               >
                 <div className="mb-6 h-1 w-12 bg-[#f5b400]" />
 
-                <h3 className="text-xl font-black tracking-[-0.03em] text-[#043079]">
+                <h3 className="text-[20px] font-extrabold tracking-[-0.03em] text-[#043079]">
                   {item.title}
                 </h3>
 
-                <p className="mt-4 text-sm leading-7 text-slate-600">
+                <p className="mt-4 text-[15px] font-normal leading-7 text-slate-600">
                   {item.text}
                 </p>
               </article>
@@ -200,6 +203,7 @@ export default function CareersPage() {
         </div>
       </section>
 
+      {/* REGISTRATION FORM */}
       <section id="register" className="bg-[#f8f8f5] px-5 py-20 md:px-8">
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
           <div>
@@ -207,65 +211,81 @@ export default function CareersPage() {
               Register as a Painter
             </p>
 
-            <h2 className="max-w-xl text-4xl font-black leading-tight tracking-[-0.05em] text-[#043079] md:text-5xl">
+            <h2 className="max-w-xl text-[33px] font-extrabold leading-tight tracking-[-0.05em] text-[#043079]">
               Submit your details for future project consideration.
             </h2>
 
-            <p className="mt-5 max-w-xl text-sm leading-7 text-slate-600">
+            <p className="mt-5 max-w-xl text-[15px] font-normal leading-7 text-slate-600">
               Fill in your details carefully. The skill set section allows
               exactly two selections, as requested by the company.
             </p>
 
-            <div className="mt-7 border-l-4 border-[#f5b400] bg-white p-5 text-sm leading-7 text-slate-600">
-              <strong className="block text-[#043079]">Important:</strong>
+            <div className="mt-7 border-l-4 border-[#f5b400] bg-white p-5 text-[15px] font-normal leading-7 text-slate-600">
+              <strong className="block font-extrabold text-[#043079]">
+                Important:
+              </strong>
               Select exactly two skills. You cannot submit with fewer or more
               than two skill areas.
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} className="bg-white p-6 text-slate-800 shadow-2xl">
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white p-6 text-slate-800 shadow-2xl"
+          >
             <div className="grid gap-4 sm:grid-cols-2">
               <input
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
                 placeholder="Name"
-                className="h-11 border border-[#043079]/30 bg-white px-4 text-sm text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
+                aria-label="Full name"
+                autoComplete="name"
+                className="h-11 border border-[#043079]/30 bg-white px-4 text-[15px] font-normal text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
               />
 
               <input
                 value={age}
                 onChange={(event) => setAge(event.target.value)}
                 placeholder="Age"
+                aria-label="Age"
                 inputMode="numeric"
-                className="h-11 border border-[#043079]/30 bg-white px-4 text-sm text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
+                className="h-11 border border-[#043079]/30 bg-white px-4 text-[15px] font-normal text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
               />
 
               <input
                 value={county}
                 onChange={(event) => setCounty(event.target.value)}
                 placeholder="County"
-                className="h-11 border border-[#043079]/30 bg-white px-4 text-sm text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
+                aria-label="County"
+                className="h-11 border border-[#043079]/30 bg-white px-4 text-[15px] font-normal text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
               />
 
               <input
                 value={estate}
                 onChange={(event) => setEstate(event.target.value)}
                 placeholder="Estate You Live In"
-                className="h-11 border border-[#043079]/30 bg-white px-4 text-sm text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
+                aria-label="Estate you live in"
+                className="h-11 border border-[#043079]/30 bg-white px-4 text-[15px] font-normal text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
               />
 
               <input
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
                 placeholder="Tel No."
-                className="h-11 border border-[#043079]/30 bg-white px-4 text-sm text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400] sm:col-span-2"
+                aria-label="Telephone number"
+                type="tel"
+                autoComplete="tel"
+                className="h-11 border border-[#043079]/30 bg-white px-4 text-[15px] font-normal text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400] sm:col-span-2"
               />
             </div>
 
             <div className="mt-6">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                  <p className="text-sm font-black text-[#043079]">Skill Set</p>
+                  <p className="text-[15px] font-extrabold text-[#043079]">
+                    Skill Set
+                  </p>
+
                   <p className="mt-1 text-xs leading-5 text-slate-500">
                     Select exactly two skills.
                   </p>
@@ -273,7 +293,9 @@ export default function CareersPage() {
 
                 <span
                   className={`text-xs font-extrabold ${
-                    selectedSkills.length === 2 ? "text-[#043079]" : "text-[#cc0f06]"
+                    selectedSkills.length === 2
+                      ? "text-[#043079]"
+                      : "text-[#cc0f06]"
                   }`}
                 >
                   {selectedSkills.length}/2 selected
@@ -288,7 +310,7 @@ export default function CareersPage() {
                   return (
                     <label
                       key={skill}
-                      className={`flex cursor-pointer items-center gap-3 border px-4 py-3 text-sm font-semibold transition ${
+                      className={`flex cursor-pointer items-center gap-3 border px-4 py-3 text-[15px] font-normal transition ${
                         checked
                           ? "border-[#043079] bg-[#f5b400]/15 text-[#043079]"
                           : disabled
@@ -303,6 +325,7 @@ export default function CareersPage() {
                         onChange={() => toggleSkill(skill)}
                         className="h-4 w-4 accent-[#cc0f06]"
                       />
+
                       {skill}
                     </label>
                   );
@@ -323,7 +346,10 @@ export default function CareersPage() {
             </button>
 
             {feedback && (
-              <p className="mt-3 text-center text-xs font-semibold leading-5 text-[#043079]">
+              <p
+                aria-live="polite"
+                className="mt-3 text-center text-xs font-semibold leading-5 text-[#043079]"
+              >
                 {feedback}
               </p>
             )}
@@ -336,7 +362,32 @@ export default function CareersPage() {
         </div>
       </section>
 
-      <ContactSection whatsappMessage={whatsappMessage} />
+      {/* COMPACT CONTACT CTA */}
+      <section className="bg-white px-5 py-16 md:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 border border-[#043079]/10 bg-[#f8f8f5] p-7 md:flex-row md:items-center md:p-9">
+          <div>
+            <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.28em] text-[#cc0f06]">
+              General Enquiries
+            </p>
+
+            <h2 className="max-w-2xl text-[33px] font-extrabold leading-tight tracking-[-0.05em] text-[#043079]">
+              Have a question about registration or future opportunities?
+            </h2>
+
+            <p className="mt-4 max-w-2xl text-[15px] font-normal leading-7 text-slate-600">
+              Contact our team for clarification about painter registration,
+              project-based opportunities, or the application process.
+            </p>
+          </div>
+
+          <a
+            href="/contact-us"
+            className="inline-flex shrink-0 items-center justify-center bg-[#cc0f06] px-7 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition duration-300 hover:bg-[#a90d06]"
+          >
+            Contact Our Team
+          </a>
+        </div>
+      </section>
     </main>
   );
 }

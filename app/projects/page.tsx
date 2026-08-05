@@ -1,6 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
+
 import Navbar from "@/components/Navbar";
-import ContactSection from "@/components/ContactSection";
 
 const projects = [
   {
@@ -66,108 +67,128 @@ const proofPoints = [
 ];
 
 export default function ProjectsPage() {
-  const whatsappMessage = encodeURIComponent(
-    "Hello The Machine Painting Co Ltd, I would like to ask about your projects and painting work."
-  );
-
   return (
-    <main className="overflow-hidden bg-[#f8f8f5] pt-[76px] text-[#043079]">
+    <main className="overflow-hidden bg-[#f7f9fc] pt-[85px] text-[#043079]">
       <Navbar />
 
       {/* HERO */}
 <section className="bg-[#043079] text-white">
-  <div className="mx-auto grid max-w-7xl gap-8 px-5 py-12 md:px-8 lg:h-[460px] lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:py-0">
+  <div className="mx-auto grid max-w-[1180px] gap-8 px-5 py-12 md:px-8 lg:h-[460px] lg:grid-cols-[0.95fr_1.05fr] lg:items-center lg:py-0">
     <div>
-      <p className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.28em] text-[#f5b400]">
-        Projects
-      </p>
+      {/* MOBILE EYEBROW — HOMEPAGE SCALE */}
+      <div className="flex items-center gap-3 md:hidden">
+        <span className="h-[3px] w-9 shrink-0 bg-[#cc0f06]" />
 
-      <h1 className="max-w-3xl text-[36px] font-black leading-[1.03] tracking-[-0.05em] text-white md:text-6xl">
-        Our Projects,
-        <span className="block text-[#f5b400]">
-          Painting & Renovation Works
+        <p className="text-[8px] font-extrabold uppercase leading-4 tracking-[0.15em] text-[#f5b400] min-[390px]:text-[9px]">
+          Projects
+        </p>
+      </div>
+
+      {/* DESKTOP EYEBROW */}
+      <div className="hidden items-center gap-3 md:flex">
+        <span className="h-[3px] w-11 shrink-0 bg-[#cc0f06]" />
+
+        <p className="text-[11px] font-extrabold uppercase leading-4 tracking-[0.16em] text-[#f5b400]">
+          Projects
+        </p>
+      </div>
+
+      {/* MOBILE H1 — EXACT HOMEPAGE SCALE */}
+      <h1 className="mt-3 font-extrabold leading-[1.01] tracking-[-0.035em] text-white md:hidden">
+        <span className="block text-[27px] min-[390px]:text-[29px]">
+          Our Projects,
+        </span>
+
+        <span className="block text-[25px] text-[#f5b400] min-[390px]:text-[27px]">
+          Painting &amp; Renovation Works
         </span>
       </h1>
 
-      {/* MOBILE-ONLY HERO IMAGE CONTAINER (Matches image_ceef48.png structure) */}
-      <div className="relative mt-6 h-[240px] w-full overflow-hidden bg-white/5 lg:hidden">
+      {/* DESKTOP H1 */}
+      <h1 className="mt-5 hidden font-extrabold leading-[1.02] tracking-[-0.035em] text-white md:block">
+        <span className="block text-[47px]">Our Projects,</span>
+
+        <span className="block text-[47px] text-[#f5b400]">
+          Painting &amp; Renovation Works
+        </span>
+      </h1>
+
+      {/* MOBILE-ONLY HERO IMAGE */}
+      <div className="relative mt-6 h-[240px] w-full overflow-hidden border-t-[3px] border-[#f5b400] bg-white/5 lg:hidden">
         <Image
           src="/machine/project-003.jpg"
           alt="Commercial project by The Machine Painting Co Ltd"
           fill
           priority
+          quality={100}
           sizes="(max-width: 1024px) 100vw"
           className="object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#043079]/35 via-transparent to-transparent" />
-        <div className="absolute bottom-4 left-4 right-4 bg-[#043079]/85 p-4 backdrop-blur-sm">
-          <p className="text-[9px] font-extrabold uppercase tracking-[0.18em] text-[#f5b400]">
-            Video Project Portfolio
-          </p>
-          <p className="mt-1 text-xs font-semibold leading-5 text-white/90">
-            Click any project thumbnail below to open the project video on YouTube.
-          </p>
-        </div>
+
+        <div className="absolute inset-0 bg-gradient-to-t from-[#043079]/18 via-transparent to-transparent" />
       </div>
 
-      <p className="mt-5 max-w-2xl text-sm font-medium leading-7 text-white/80">
-        Explore selected projects by The Machine Painting Co Ltd and see
-        how our team has added vibrancy through painting, renovation, and
-        finishing works across offices, villas, and apartments.
+      <p className="mt-5 max-w-2xl text-[12px] leading-[19px] text-white/92 min-[390px]:text-[12.5px] md:text-[15px] md:leading-[25px]">
+        Explore selected projects by The Machine Painting Co Ltd and see how
+        our team has added vibrancy through painting, renovation, and finishing
+        works across offices, villas, and apartments.
       </p>
 
       <div className="mt-7 flex flex-col gap-3 sm:flex-row">
         <a
           href="#projects"
-          className="inline-flex items-center justify-center bg-[#cc0f06] px-7 py-3.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition duration-300 hover:bg-[#a90d06]"
+          className="inline-flex min-h-12 items-center justify-center bg-[#f5b400] px-7 text-[11px] font-bold text-[#043079] transition hover:bg-[#ffc62f]"
         >
           View Projects
         </a>
 
-        <a
-          href="#quote"
-          className="inline-flex items-center justify-center border border-white/20 px-7 py-3.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition duration-300 hover:bg-white hover:text-[#043079]"
+        <Link
+          href="/contact-us#quote"
+          className="inline-flex min-h-12 items-center justify-center border border-white/80 px-7 text-[11px] font-bold text-white transition hover:bg-white hover:text-[#043079]"
         >
           Request Similar Project
-        </a>
+        </Link>
       </div>
     </div>
 
-    {/* DESKTOP-ONLY HERO IMAGE CONTAINER */}
-    <div className="relative hidden overflow-hidden bg-white/5 lg:block lg:min-h-[360px]">
+    {/* DESKTOP-ONLY HERO IMAGE */}
+    <div className="relative hidden overflow-hidden border-t-[4px] border-[#f5b400] bg-white/5 lg:block lg:min-h-[360px]">
       <Image
         src="/machine/project-003.jpg"
         alt="Commercial project by The Machine Painting Co Ltd"
         fill
         priority
+        quality={100}
         sizes="50vw"
         className="object-cover object-center"
       />
 
-      <div className="absolute inset-0 bg-gradient-to-t from-[#043079]/35 via-transparent to-transparent" />
-
-      <div className="absolute bottom-5 left-5 right-5 bg-[#043079]/85 p-5 backdrop-blur-sm">
-        <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#f5b400]">
-          Video Project Portfolio
-        </p>
-        <p className="mt-2 text-sm font-semibold leading-6 text-white/90">
-          Click any project thumbnail below to open the project video on
-          YouTube.
-        </p>
-      </div>
+      <div className="absolute inset-0 bg-gradient-to-t from-[#043079]/16 via-transparent to-transparent" />
     </div>
   </div>
 </section>
 
       {/* PROOF STRIP */}
       <section className="bg-[#043079] px-5 pb-8 text-white md:px-8">
-        <div className="mx-auto grid max-w-7xl gap-3 border-t border-white/10 pt-8 sm:grid-cols-2 lg:grid-cols-4">
-          {proofPoints.map((item) => (
+        <div className="mx-auto grid max-w-[1180px] gap-3 border-t border-white/12 pt-8 sm:grid-cols-2 lg:grid-cols-4">
+          {proofPoints.map((item, index) => (
             <div
               key={item}
-              className="border border-white/10 bg-white/[0.04] px-5 py-4"
+              className={[
+                "flex items-center gap-3 border px-5 py-4",
+                index === 0
+                  ? "border-[#f5b400]/50 bg-[#0b4b9e]"
+                  : "border-white/12 bg-white/[0.045]",
+              ].join(" ")}
             >
-              <p className="text-[11px] font-extrabold uppercase tracking-[0.16em] text-white/75">
+              <span
+                className={[
+                  "h-2 w-2 shrink-0",
+                  index === 0 ? "bg-[#f5b400]" : "bg-white/45",
+                ].join(" ")}
+              />
+
+              <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-white/82">
                 {item}
               </p>
             </div>
@@ -176,19 +197,21 @@ export default function ProjectsPage() {
       </section>
 
       {/* INTRO */}
-      <section className="bg-white px-5 py-16 md:px-8">
-        <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+      <section className="bg-white px-5 py-16 md:px-8 md:py-20">
+        <div className="mx-auto grid max-w-[1180px] gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start lg:gap-16">
           <div>
-            <p className="mb-4 text-[11px] font-extrabold uppercase tracking-[0.28em] text-[#cc0f06]">
+            <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.25em] text-[#cc0f06]">
               Our Projects
             </p>
 
-            <h2 className="max-w-xl text-4xl font-black leading-tight tracking-[-0.05em] text-[#043079] md:text-5xl">
-              A closer look at our latest works.
+            <h2 className="max-w-xl text-[30px] font-extrabold leading-[1.12] tracking-[-0.04em] text-[#043079] md:text-[33px]">
+              A closer look at our latest painting and renovation works.
             </h2>
+
+            <span className="mt-6 block h-[4px] w-16 bg-[#f5b400]" />
           </div>
 
-          <div className="space-y-5 text-sm leading-7 text-slate-600">
+          <div className="space-y-5 text-[15px] leading-7 text-slate-600">
             <p>
               This section helps visitors understand the context and background
               of selected works by The Machine Painting Co Ltd. It offers an
@@ -199,58 +222,67 @@ export default function ProjectsPage() {
             <p>
               Each project gives an insightful glimpse into the company’s
               expertise, execution, and quality of work delivered. Explore the
-              videos below to see how the team has added vibrancy and transformed
-              different spaces.
+              videos below to see how the team has added vibrancy and
+              transformed different spaces.
             </p>
 
             <p>
-  For more videos, visit the YouTube channel:{" "}
-  <a
-    href="https://www.youtube.com/@themachinepaintingcompany"
-    target="_blank"
-    rel="noreferrer"
-    className="font-extrabold text-[#043079] underline decoration-[#f5b400] decoration-2 underline-offset-4 transition hover:text-[#cc0f06]"
-  >
-    The Machine Painting Co Ltd.
-  </a>
-</p>
+              For more videos, visit the YouTube channel:{" "}
+              <a
+                href="https://www.youtube.com/@themachinepaintingcompany"
+                target="_blank"
+                rel="noreferrer"
+                className="font-extrabold text-[#043079] underline decoration-[#f5b400] decoration-2 underline-offset-4 transition hover:text-[#0453b1]"
+              >
+                The Machine Painting Co Ltd.
+              </a>
+            </p>
           </div>
         </div>
       </section>
 
       {/* PROJECTS */}
-      <section id="projects" className="bg-[#f8f8f5] px-5 py-20 md:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-12 grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
+      <section
+        id="projects"
+        className="bg-[#f7f9fc] px-5 py-16 md:px-8 md:py-20"
+      >
+        <div className="mx-auto max-w-[1180px]">
+          <div className="mb-10 grid gap-6 md:mb-12 md:grid-cols-[1fr_auto] md:items-end">
             <div>
-              <p className="mb-4 text-[11px] font-extrabold uppercase tracking-[0.28em] text-[#cc0f06]">
+              <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.25em] text-[#cc0f06]">
                 Video Portfolio
               </p>
 
-              <h2 className="max-w-4xl text-4xl font-black leading-tight tracking-[-0.05em] text-[#043079] md:text-5xl">
-                Project videos showing painting, renovation, and transformation
-                works.
+              <h2 className="max-w-[820px] text-[30px] font-extrabold leading-[1.12] tracking-[-0.04em] text-[#043079] md:text-[33px]">
+                Project videos showing painting, renovation, and complete
+                transformation works.
               </h2>
 
-              <p className="mt-5 max-w-2xl text-sm leading-7 text-slate-600">
-                Click once on any project thumbnail to open the related YouTube
-                video in a new tab.
+              <p className="mt-5 max-w-2xl text-[15px] leading-7 text-slate-600">
+                Select any project card to open its related YouTube video in a
+                new tab.
               </p>
             </div>
 
-            <div className="hidden h-1 w-20 bg-[#f5b400] md:block" />
+            <div className="hidden h-1.5 w-16 bg-[#f5b400] md:block" />
           </div>
 
-          <div className="grid gap-8 lg:grid-cols-3">
+          <div className="grid gap-6 lg:grid-cols-3">
             {projects.map((project, index) => (
               <a
                 key={project.title}
                 href={project.videoUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="group overflow-hidden border border-[#043079]/10 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#cc0f06] hover:shadow-2xl"
+                aria-label={`Watch the ${project.title} project video on YouTube`}
+                className={[
+                  "group flex h-full flex-col overflow-hidden border bg-white transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_58px_rgba(4,48,121,0.12)]",
+                  index === 1
+                    ? "border-[#0453b1] shadow-[0_18px_44px_rgba(4,83,177,0.11)]"
+                    : "border-[#043079]/10 hover:border-[#0453b1]/45",
+                ].join(" ")}
               >
-                <div className="relative aspect-[4/3] overflow-hidden bg-[#f8f8f5]">
+                <div className="relative aspect-[4/3] overflow-hidden bg-[#eef2f7]">
                   <Image
                     src={project.image}
                     alt={`${project.title} thumbnail`}
@@ -260,99 +292,154 @@ export default function ProjectsPage() {
                     className="object-cover object-center transition duration-500 group-hover:scale-[1.04]"
                   />
 
-                  <div className="absolute inset-0 bg-[#043079]/10 transition duration-300 group-hover:bg-[#043079]/25" />
+                  <div className="absolute inset-0 bg-[#043079]/8 transition duration-300 group-hover:bg-[#043079]/22" />
 
-                  <div className="absolute left-4 top-4 bg-[#cc0f06] px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white">
+                  <div className="absolute left-4 top-4 bg-[#043079]/95 px-3.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[0.14em] text-white">
                     Project {String(index + 1).padStart(2, "0")}
                   </div>
 
                   <div className="absolute inset-0 grid place-items-center">
-                    <div className="grid h-16 w-16 place-items-center rounded-full bg-white/95 text-[#cc0f06] shadow-2xl transition duration-300 group-hover:scale-110">
-                      <span className="ml-1 text-2xl">▶</span>
+                    <div className="grid h-16 w-16 place-items-center rounded-full border border-white/65 bg-white/95 text-[#043079] shadow-[0_16px_38px_rgba(4,48,121,0.25)] transition duration-300 group-hover:scale-110 group-hover:bg-[#f5b400]">
+                      <span aria-hidden="true" className="ml-1 text-2xl">
+                        ▶
+                      </span>
                     </div>
                   </div>
 
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#043079]/95 via-[#043079]/55 to-transparent p-5 pt-16">
-                    <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#f5b400]">
-                      Click to Watch Video
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#043079]/90 via-[#043079]/38 to-transparent px-5 pb-5 pt-16">
+                    <p className="text-[9px] font-extrabold uppercase tracking-[0.17em] text-[#f5b400]">
+                      Watch Project Video
                     </p>
                   </div>
                 </div>
 
-                <div className="p-7">
-                  <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#cc0f06]">
+                <div className="flex flex-1 flex-col p-6 md:p-7">
+                  <p className="text-[9px] font-extrabold uppercase tracking-[0.18em] text-[#0453b1]">
                     {project.category}
                   </p>
 
-                  <h3 className="mt-3 text-2xl font-black leading-tight tracking-[-0.04em] text-[#043079]">
+                  <h3 className="mt-3 text-[20px] font-extrabold leading-[1.18] tracking-[-0.03em] text-[#043079]">
                     {project.title}
                   </h3>
 
-                  <div className="mt-4 grid gap-2 border-y border-[#043079]/10 py-4 text-xs font-bold text-slate-500">
+                  <div className="mt-5 grid gap-2 border-y border-[#043079]/10 py-4 text-[12px] leading-5 text-slate-500">
                     <p>
-                      <span className="text-[#043079]">Location:</span>{" "}
+                      <span className="font-extrabold text-[#043079]">
+                        Location:
+                      </span>{" "}
                       {project.location}
                     </p>
+
                     <p>
-                      <span className="text-[#043079]">Key fact:</span>{" "}
+                      <span className="font-extrabold text-[#043079]">
+                        Key fact:
+                      </span>{" "}
                       {project.area}
                     </p>
                   </div>
 
-                  <p className="mt-4 text-sm leading-7 text-slate-600">
+                  <p className="mt-5 text-[14px] leading-6 text-slate-600">
                     {project.description}
                   </p>
 
                   <div className="mt-6 space-y-3">
                     {project.highlights.map((item) => (
                       <div key={item} className="flex gap-3">
-                        <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#f5b400]" />
-                        <p className="text-sm leading-6 text-slate-600">
+                        <span className="mt-[7px] h-2 w-2 shrink-0 bg-[#f5b400]" />
+
+                        <p className="text-[14px] leading-6 text-slate-600">
                           {item}
                         </p>
                       </div>
                     ))}
                   </div>
 
-                  <div className="mt-7 inline-flex items-center justify-center bg-[#043079] px-6 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition duration-300 group-hover:bg-[#cc0f06]">
-                    Open Video
+                  <div className="mt-auto pt-7">
+                    <span
+                      className={[
+                        "inline-flex min-h-11 w-full items-center justify-center px-6 text-[10px] font-extrabold uppercase tracking-[0.14em] transition",
+                        index === 1
+                          ? "bg-[#f5b400] text-[#043079] group-hover:bg-[#ffc62f]"
+                          : "bg-[#043079] text-white group-hover:bg-[#0453b1]",
+                      ].join(" ")}
+                    >
+                      Open Video
+                    </span>
                   </div>
                 </div>
               </a>
             ))}
           </div>
 
-          <div className="mt-14 flex flex-col items-center justify-between gap-5 border-t border-[#043079]/10 pt-8 text-center md:flex-row md:text-left">
-            <div>
-              <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#cc0f06]">
-                Planning a similar project?
-              </p>
+          {/* PROJECT CTA */}
+          <div className="mt-12 overflow-hidden border border-[#043079]/10 bg-white">
+            <div className="grid lg:grid-cols-[1fr_auto] lg:items-stretch">
+              <div className="px-6 py-10 text-center md:px-10 md:py-12 lg:text-left">
+                <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#cc0f06] md:text-[11px]">
+                  Planning a Similar Project?
+                </p>
 
-              <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-[#043079]">
-                Request a quotation or book a site visit using the form below.
-              </h3>
-            </div>
+                <h3 className="mt-3 max-w-[720px] text-[26px] font-extrabold leading-[1.18] tracking-[-0.04em] text-[#043079] md:text-[30px]">
+                  Request a quotation or arrange a site visit with our team.
+                </h3>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <a
-                href="#quote"
-                className="inline-flex items-center justify-center bg-[#cc0f06] px-7 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition duration-300 hover:bg-[#a90d06]"
-              >
-                Get a Quotation
-              </a>
+                <p className="mt-4 max-w-[660px] text-[14px] leading-6 text-slate-600">
+                  Share your location, property type, current condition, and the
+                  result you would like to achieve.
+                </p>
+              </div>
 
-              <a
-                href="#site-visit"
-                className="inline-flex items-center justify-center border border-[#043079]/20 px-7 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#043079] transition duration-300 hover:border-[#cc0f06] hover:text-[#cc0f06]"
-              >
-                Book Site Visit
-              </a>
+              <div className="grid min-w-[285px] gap-3 bg-[#0453b1] px-6 py-8 md:px-8 lg:content-center">
+                <Link
+                  href="/contact-us#quote"
+                  className="inline-flex min-h-12 items-center justify-center bg-[#f5b400] px-7 text-center text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#043079] transition hover:bg-white"
+                >
+                  Get a Quotation
+                </Link>
+
+                <Link
+                  href="/contact-us#site-visit"
+                  className="inline-flex min-h-12 items-center justify-center border border-white/45 px-7 text-center text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition hover:bg-white hover:text-[#043079]"
+                >
+                  Book Site Visit
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <ContactSection whatsappMessage={whatsappMessage} />
+      {/* COMPACT CONTACT CTA */}
+      <section className="bg-white px-5 py-16 md:px-8 md:py-20">
+        <div className="mx-auto max-w-[1180px] overflow-hidden border border-[#043079]/10 bg-[#f7f9fc]">
+          <div className="grid lg:grid-cols-[1fr_auto] lg:items-center">
+            <div className="px-6 py-10 md:px-10 md:py-12">
+              <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.25em] text-[#cc0f06]">
+                Start a Similar Project
+              </p>
+
+              <h2 className="max-w-[760px] text-[28px] font-extrabold leading-[1.15] tracking-[-0.04em] text-[#043079] md:text-[33px]">
+                Ready to discuss your painting, renovation, or property
+                transformation?
+              </h2>
+
+              <p className="mt-4 max-w-[680px] text-[15px] leading-7 text-slate-600">
+                Request a quotation, arrange a site visit, or speak directly
+                with our team about your project requirements.
+              </p>
+            </div>
+
+            <div className="flex h-full min-w-[270px] items-center justify-center bg-[#043079] px-6 py-10 md:px-10">
+              <Link
+                href="/contact-us"
+                className="inline-flex min-h-12 w-full items-center justify-center bg-[#f5b400] px-7 text-center text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#043079] transition hover:bg-white"
+              >
+                Contact Our Team
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }

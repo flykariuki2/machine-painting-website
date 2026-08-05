@@ -1,41 +1,126 @@
-"use client";
-
-import { useMemo, useState } from "react";
 import Image from "next/image";
-import Navbar from "@/components/Navbar";
-import FAQSection from "@/components/FAQSection";
+import Link from "next/link";
+
 import ContactSection from "@/components/ContactSection";
+import FAQSection from "@/components/FAQSection";
+import Navbar from "@/components/Navbar";
+import EstimatorSection from "@/components/home/EstimatorSection";
+import HeroSlider from "@/components/home/HeroSlider";
 
 const services = [
   {
     title: "Interior Painting",
     text: "Clean, smooth interior wall finishes for homes, offices, apartments, and commercial spaces.",
-    icon: "⌂",
+    svg: (
+      <svg
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+        />
+      </svg>
+    ),
   },
   {
     title: "Exterior Painting",
     text: "Durable exterior painting that refreshes curb appeal while protecting walls from weather exposure.",
-    icon: "▣",
+    svg: (
+      <svg
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5m0 0h4m-4 0V11m0 0h4m-4 0H7"
+        />
+      </svg>
+    ),
   },
   {
     title: "Machine Spray Painting",
     text: "Precision spray painting for faster coverage, smoother application, and consistent large-surface results.",
-    icon: "✦",
+    svg: (
+      <svg
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M13 10V3L4 14h7v7l9-11h-7z"
+        />
+      </svg>
+    ),
   },
   {
     title: "Wall Skimming / Surface Preparation",
     text: "Surface preparation, smoothing, and repair support before painting to achieve a clean final finish.",
-    icon: "▦",
+    svg: (
+      <svg
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M4 6h16M4 12h16M4 18h16"
+        />
+      </svg>
+    ),
   },
   {
     title: "Commercial Painting",
     text: "Professional painting support for offices, apartments, buildings, warehouses, and business premises.",
-    icon: "◈",
+    svg: (
+      <svg
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"
+        />
+      </svg>
+    ),
   },
   {
     title: "Renovation Painting",
     text: "Painting and finishing support for property refreshes, repainting projects, and renovation works.",
-    icon: "◇",
+    svg: (
+      <svg
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+        />
+      </svg>
+    ),
   },
 ];
 
@@ -86,301 +171,227 @@ const process = [
 ];
 
 export default function Home() {
-  const [width, setWidth] = useState("10");
-  const [height, setHeight] = useState("3");
-  const [surface, setSurface] = useState("interior");
-  const [finish, setFinish] = useState("standard");
-
-  const estimate = useMemo(() => {
-    const w = Number(width) || 0;
-    const h = Number(height) || 0;
-
-    const baseRates: Record<string, number> = {
-      standard: 300,
-      premium: 450,
-      decorative: 700,
-      roof: 350,
-    };
-
-    const surfaceMultiplier: Record<string, number> = {
-      interior: 1,
-      exterior: 1.15,
-      roof: 1.2,
-      mural: 1.8,
-    };
-
-    const rate = baseRates[finish] || 300;
-    const multiplier = surfaceMultiplier[surface] || 1;
-
-    return Math.round(w * h * rate * multiplier);
-  }, [width, height, surface, finish]);
-
   const whatsappMessage = encodeURIComponent(
-    "Hello The Machine Painting Co Ltd, I would like to request a painting quote."
+    "Hello The Machine Painting Co Ltd, I would like to request a painting quote.",
   );
 
   return (
-    <main className="overflow-hidden bg-[#f8f8f5] pt-[76px] text-[#043079]">
+    <main className="overflow-hidden bg-[#f7f9fc] pt-[85px] text-[#043079]">
       <Navbar />
 
-      {/* HERO */}
-<section id="home" className="pt-0">
-  <div className="grid min-h-0 bg-[#043079] lg:h-[460px] lg:grid-cols-2">
-    {/* DESKTOP CONTENT BLOCK / MOBILE BOTTOM WRAPPER */}
-    <div className="flex items-center px-5 py-8 text-white sm:px-8 md:px-12 lg:px-14 xl:px-16">
-      <div className="max-w-lg w-full">
-        {/* MOBILE ONLY TAGLINE + HEADING: Moved above the image to clear chat widgets (image_cf5977.png layout) */}
-        <div className="lg:hidden">
-          <p className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.26em] text-[#f5b400]">
-            Professional Spray Painting in Kenya
-          </p>
+      <HeroSlider />
 
-          <h1 className="max-w-xl text-[34px] font-black leading-[1.05] tracking-[-0.035em] text-white sm:text-4xl">
-            Beautiful Structures,
-            <span className="block text-[#f5b400]">
-              Sprayed Perfectly
-            </span>
-          </h1>
+      {/* TRUST STRIP */}
+      <section
+        aria-label="Service assurances"
+        className="border-b border-[#043079]/10 bg-white"
+      >
+        <div className="mx-auto grid max-w-[1180px] grid-cols-2 md:grid-cols-4">
+          {[
+            {
+              value: "Free",
+              label: "Site Estimate",
+              text: "Clear assessment before final pricing.",
+            },
+            {
+              value: "Fast",
+              label: "Turnaround",
+              text: "Efficient application for projects of different sizes.",
+            },
+            {
+              value: "Smooth",
+              label: "Surface Finish",
+              text: "Consistent coverage with fewer visible marks.",
+            },
+            {
+              value: "24HR",
+              label: "Quote Response",
+              text: "Prompt feedback after receiving project details.",
+            },
+          ].map((item, index) => (
+            <article
+              key={item.label}
+              className={[
+                "px-5 py-6 md:px-7 md:py-8",
+                index % 2 === 0
+                  ? "border-r border-[#043079]/10"
+                  : "",
+                index < 2
+                  ? "border-b border-[#043079]/10 md:border-b-0"
+                  : "",
+                index < 3
+                  ? "md:border-r md:border-[#043079]/10"
+                  : "",
+              ].join(" ")}
+            >
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 bg-[#f5b400]" />
+
+                <strong className="text-[20px] font-extrabold text-[#043079]">
+                  {item.value}
+                </strong>
+              </div>
+
+              <p className="mt-1 text-[10px] font-extrabold uppercase tracking-[0.16em] text-[#043079]/70">
+                {item.label}
+              </p>
+
+              <p className="mt-2 hidden text-[13px] leading-5 text-slate-500 sm:block">
+                {item.text}
+              </p>
+            </article>
+          ))}
         </div>
-
-        {/* MOBILE ONLY IMAGE CONTAINER: Inserted right after heading on mobile layouts */}
-        <div className="relative mt-5 h-[260px] w-full overflow-hidden bg-[#043079] sm:h-[320px] lg:hidden">
-          <Image
-            src="/machine/hero1.jpg"
-            alt="The Machine Painting Co Ltd team"
-            fill
-            priority
-            sizes="(max-width: 1024px) 100vw"
-            className="object-contain object-center scale-[1.025]"
-          />
-          <div className="absolute inset-0 bg-[#043079]/5" />
-          <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-b from-[#043079]/0 via-[#043079]/85 to-[#043079]" />
-        </div>
-
-        {/* DESKTOP ONLY HEADING BLOCK: Kept perfectly intact for clean grid presentation (image_cf5d39.jpg layout) */}
-        <div className="hidden lg:block">
-          <p className="mb-3 text-[10px] font-extrabold uppercase tracking-[0.26em] text-[#f5b400]">
-            Professional Spray Painting in Kenya
-          </p>
-
-          <h1 className="max-w-xl text-[34px] font-black leading-[1.05] tracking-[-0.035em] text-white sm:text-4xl lg:text-[44px]">
-            Beautiful Structures,
-            <span className="block text-[#f5b400]">
-              Sprayed Perfectly
-            </span>
-          </h1>
-        </div>
-
-        {/* BODY DESCRIPTION AND CTAs: Clear of the widgets on mobile */}
-        <p className="mt-5 max-w-md text-sm font-medium leading-6 text-white/80">
-          We don&apos;t just paint walls — we bring them to life through
-          professional spray painting and finishing for homes, businesses,
-          apartments, and construction projects.
-        </p>
-
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <a
-            href="#quote"
-            className="inline-flex items-center justify-center bg-[#cc0f06] px-6 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white shadow-lg shadow-black/10 transition duration-300 hover:bg-[#a90d06]"
-          >
-            Get Free Quote
-          </a>
-
-          <a
-            href="/gallery"
-            className="inline-flex items-center justify-center border border-white/20 px-6 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition duration-300 hover:bg-white hover:text-[#043079]"
-          >
-            View Before & After
-          </a>
-        </div>
-
-        <div className="mt-6 flex flex-wrap gap-2.5">
-          {["Interior", "Exterior", "Spray Painting", "Commercial"].map(
-            (item) => (
-              <span
-                key={item}
-                className="border border-white/10 bg-white/[0.04] px-3.5 py-2 text-[10px] font-bold text-white/90"
-              >
-                {item}
-              </span>
-            )
-          )}
-        </div>
-      </div>
-    </div>
-
-    {/* DESKTOP ONLY IMAGE CONTAINER */}
-    <div className="relative hidden h-full overflow-hidden bg-[#043079] lg:block">
-      <Image
-        src="/machine/hero1.jpg"
-        alt="The Machine Painting Co Ltd team"
-        fill
-        priority
-        sizes="50vw"
-        className="object-contain object-center scale-[1.025]"
-      />
-      <div className="absolute inset-0 bg-[#043079]/5" />
-      <div className="absolute inset-y-0 left-0 hidden w-8 bg-gradient-to-r from-[#043079]/70 to-transparent lg:block" />
-      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-b from-[#043079]/0 via-[#043079]/85 to-[#043079]" />
-    </div>
-  </div>
-
-  <a
-    href={`https://wa.me/254785285828?text=${whatsappMessage}`}
-    target="_blank"
-    rel="noreferrer"
-    aria-label="Chat on WhatsApp"
-    className="fixed bottom-6 right-6 z-50 grid h-12 w-12 place-items-center rounded-full bg-[#25d366] text-lg font-black text-white shadow-2xl shadow-green-500/30"
-  >
-    ☎
-  </a>
-</section>
-
-{/* STATS */}
-<section className="relative z-20 bg-[#043079] px-5 py-5 text-white md:px-8">
-  <div className="mx-auto grid max-w-7xl grid-cols-2 gap-5 text-center md:grid-cols-4">
-    {[
-      ["Free", "Site estimate"],
-      ["Fast", "Turnaround"],
-      ["Smooth", "Surface finish"],
-      ["24HR", "Quote response"],
-    ].map(([value, label]) => (
-      <div key={label}>
-        <strong className="block text-base font-black text-[#f5b400]">
-          {value}
-        </strong>
-        <span className="mt-1 block text-[9px] font-bold uppercase tracking-[0.16em] text-white/60">
-          {label}
-        </span>
-      </div>
-    ))}
-  </div>
-</section>
+      </section>
 
       {/* SERVICES */}
-      <section id="services" className="bg-white px-5 py-20 md:px-8">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-12 grid gap-6 md:grid-cols-[1fr_auto] md:items-end">
+      <section id="services" className="px-5 py-16 md:px-8 md:py-20">
+        <div className="mx-auto max-w-[1180px]">
+          <div className="mb-10 grid gap-5 md:mb-12 md:grid-cols-[1fr_auto] md:items-end">
             <div>
-              <p className="mb-4 text-[11px] font-extrabold uppercase tracking-[0.28em] text-[#cc0f06]">
+              <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.25em] text-[#cc0f06]">
                 Our Expertise
               </p>
 
-              <h2 className="max-w-3xl text-4xl font-black leading-tight tracking-[-0.05em] text-[#043079] md:text-5xl">
-                Master-Class Painting & Finishing Solutions
+              <h2 className="max-w-3xl text-[30px] font-extrabold leading-[1.12] tracking-[-0.04em] text-[#043079] md:text-[33px]">
+                Master-Class Painting &amp; Finishing Solutions
               </h2>
             </div>
 
-            <div className="hidden h-1 w-20 bg-[#f5b400] md:block" />
+            <div className="hidden h-1.5 w-16 bg-[#f5b400] md:block" />
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {services.map((service) => (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {services.map((service, index) => (
               <article
                 key={service.title}
-                className="border border-[#043079]/10 bg-white p-8 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#cc0f06] hover:shadow-xl"
+                className={[
+                  "group relative overflow-hidden border bg-white p-6 transition duration-300 md:p-8",
+                  index === 2
+                    ? "border-[#0453b1] shadow-[0_20px_45px_rgba(4,83,177,0.12)]"
+                    : "border-[#043079]/10 hover:-translate-y-1 hover:border-[#cc0f06]/45 hover:shadow-[0_18px_40px_rgba(4,48,121,0.10)]",
+                ].join(" ")}
               >
-                <div className="mb-8 flex h-11 w-11 items-center justify-center rounded-full bg-[#f5b400]/10 text-sm font-black text-[#043079]">
-                  {service.icon}
+                <div
+                  className={[
+                    "absolute left-0 top-0 h-[3px] w-full transition",
+                    index === 2
+                      ? "bg-[#f5b400]"
+                      : "bg-transparent group-hover:bg-[#cc0f06]",
+                  ].join(" ")}
+                />
+
+                <div
+                  className={[
+                    "mb-5 flex h-11 w-11 items-center justify-center",
+                    index === 2
+                      ? "bg-[#f5b400] text-[#043079]"
+                      : "bg-[#043079] text-white",
+                  ].join(" ")}
+                >
+                  {service.svg}
                 </div>
 
-                <h3 className="text-xl font-black tracking-[-0.03em] text-[#043079]">
+                <h3 className="text-[20px] font-extrabold tracking-[-0.025em] text-[#043079]">
                   {service.title}
                 </h3>
 
-                <p className="mt-4 text-sm leading-7 text-slate-600">
+                <p className="mt-3 text-[14px] leading-6 text-slate-600">
                   {service.text}
                 </p>
               </article>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="mt-12 border border-[#043079]/10 bg-[#f8f8f5] p-7 text-center md:p-9">
-            <p className="text-[11px] font-extrabold uppercase tracking-[0.24em] text-[#cc0f06]">
-              Want to compare available options?
-            </p>
+      {/* PAINT PACKAGES BAND */}
+      <section className="bg-[#0453b1] px-5 py-14 text-center md:px-8 md:py-16">
+        <div className="mx-auto max-w-[900px]">
+          <p className="text-[10px] font-extrabold uppercase tracking-[0.24em] text-[#f5b400] md:text-[11px]">
+            Want to compare available options?
+          </p>
 
-            <h3 className="mx-auto mt-3 max-w-2xl text-2xl font-black tracking-[-0.04em] text-[#043079] md:text-3xl">
-              Explore our paint packages and choose the best fit for your home,
-              office, apartment, or commercial project.
-            </h3>
+          <h2 className="mx-auto mt-4 max-w-[760px] text-[27px] font-extrabold leading-[1.18] tracking-[-0.04em] text-white md:text-[33px]">
+            Explore our paint packages and choose the best fit for your home,
+            office, apartment, or commercial project.
+          </h2>
 
-            <div className="mt-6 flex justify-center">
-              <a
-                href="/paint-packages"
-                className="inline-flex items-center justify-center bg-[#cc0f06] px-7 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition duration-300 hover:bg-[#a90d06]"
-              >
-                View Paint Packages
-              </a>
-            </div>
-          </div>
+          <Link
+            href="/paint-packages"
+            className="mt-7 inline-flex min-h-12 items-center justify-center bg-[#f5b400] px-8 text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#043079] transition hover:bg-[#ffc62f]"
+          >
+            View Paint Packages
+          </Link>
         </div>
       </section>
 
       {/* PROJECTS */}
-      <section id="projects" className="bg-[#f8f8f5] px-5 py-20 md:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section id="projects" className="bg-white px-5 py-16 md:px-8 md:py-20">
+        <div className="mx-auto max-w-[1180px]">
           <div className="text-center">
-            <p className="mb-4 text-[11px] font-extrabold uppercase tracking-[0.28em] text-[#cc0f06]">
+            <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.25em] text-[#cc0f06]">
               Portfolio
             </p>
 
-            <h2 className="text-4xl font-black tracking-[-0.05em] text-[#043079] md:text-5xl">
+            <h2 className="text-[30px] font-extrabold tracking-[-0.04em] text-[#043079] md:text-[33px]">
               Recent Projects
             </h2>
           </div>
 
-          <div className="mx-auto mt-12 grid max-w-6xl gap-7 md:grid-cols-3">
+          <div className="mt-10 grid gap-6 md:mt-12 md:grid-cols-3">
             {projects.map((project) => (
               <article
                 key={project.title}
-                className="overflow-hidden border border-[#043079]/10 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-[#cc0f06] hover:shadow-xl"
+                className="group overflow-hidden border border-[#043079]/10 bg-white transition duration-300 hover:-translate-y-1 hover:border-[#cc0f06]/35 hover:shadow-[0_20px_45px_rgba(4,48,121,0.10)]"
               >
-                <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100">
+                <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
                   <Image
                     src={project.image}
                     alt={project.title}
                     fill
                     quality={100}
                     sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover object-center"
+                    className="object-cover object-center transition duration-500 group-hover:scale-105"
                   />
+
+                  <span className="absolute left-4 top-4 bg-[#043079]/90 px-3 py-1.5 text-[9px] font-extrabold uppercase tracking-[0.14em] text-white">
+                    {project.category}
+                  </span>
                 </div>
 
-                <div className="p-6">
-                  <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-[#cc0f06]">
-                    {project.category}
-                  </p>
-
-                  <h3 className="mt-3 text-xl font-black tracking-[-0.03em] text-[#043079]">
+                <div className="p-5 md:p-6">
+                  <h3 className="text-[19px] font-extrabold tracking-[-0.025em] text-[#043079]">
                     {project.title}
                   </h3>
+
+                  <span className="mt-4 block h-[3px] w-8 bg-[#f5b400]" />
                 </div>
               </article>
             ))}
           </div>
 
-          <div className="mt-12 flex flex-col items-center justify-between gap-5 border-t border-[#043079]/10 pt-8 text-center md:flex-row md:text-left">
-            <div>
-              <p className="text-[11px] font-extrabold uppercase tracking-[0.22em] text-[#cc0f06]">
-                Want to see more completed work?
-              </p>
-              <h3 className="mt-2 text-2xl font-black tracking-[-0.04em] text-[#043079]">
-                Explore the gallery or request a similar finish.
-              </h3>
-            </div>
+          {/* CENTRED PROJECT CTA */}
+          <div className="mt-12 border border-[#043079]/10 bg-[#f7f9fc] px-5 py-10 text-center md:px-10 md:py-12">
+            <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-[#cc0f06] md:text-[11px]">
+              Want to see more completed work?
+            </p>
 
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <a
+            <h3 className="mx-auto mt-3 max-w-[650px] text-[25px] font-extrabold leading-[1.2] tracking-[-0.035em] text-[#043079] md:text-[30px]">
+              Explore the gallery or request a similar finish.
+            </h3>
+
+            <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+              <Link
                 href="/projects"
-                className="inline-flex items-center justify-center border border-[#043079]/20 px-7 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#043079] transition duration-300 hover:border-[#cc0f06] hover:text-[#cc0f06]"
+                className="inline-flex min-h-12 items-center justify-center bg-[#0453b1] px-7 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition hover:bg-[#043079]"
               >
                 View Recent Projects
-              </a>
+              </Link>
 
               <a
-                href="/#quote"
-                className="inline-flex items-center justify-center bg-[#cc0f06] px-7 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition duration-300 hover:bg-[#a90d06]"
+                href="#quote"
+                className="inline-flex min-h-12 items-center justify-center border border-[#043079]/25 bg-white px-7 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#043079] transition hover:border-[#f5b400] hover:bg-[#f5b400]"
               >
                 Request Similar Finish
               </a>
@@ -392,270 +403,199 @@ export default function Home() {
       {/* BEFORE / AFTER */}
       <section
         id="before-after"
-        className="bg-[#043079] px-5 py-20 text-white md:px-8"
+        className="border-t-[3px] border-[#cc0f06] bg-[#043079] px-5 py-16 text-white md:px-8 md:py-20"
       >
-        <div className="mx-auto grid max-w-7xl gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-          <div className="relative overflow-hidden">
-            <div className="grid h-[360px] grid-cols-2 overflow-hidden rounded-2xl">
-              <div className="relative">
-                <Image
-                  src="/machine/before.jpg"
-                  alt="Painting project before"
-                  fill
-                  sizes="50vw"
-                  className="object-cover"
-                />
-
-                <span className="absolute bottom-4 left-4 bg-[#043079] px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white">
-                  Before
-                </span>
-              </div>
-
-              <div className="relative">
-                <Image
-                  src="/machine/after.jpg"
-                  alt="Painting project after"
-                  fill
-                  sizes="50vw"
-                  className="object-cover"
-                />
-
-                <span className="absolute bottom-4 right-4 bg-[#cc0f06] px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white">
-                  After
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <p className="mb-4 text-[11px] font-extrabold uppercase tracking-[0.28em] text-[#f5b400]">
+        <div className="mx-auto max-w-[1180px]">
+          {/* Mobile section introduction */}
+          <div className="mb-8 lg:hidden">
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.25em] text-[#f5b400]">
               Ultimate Transformation
             </p>
 
-            <h2 className="max-w-2xl text-4xl font-black leading-tight tracking-[-0.05em] text-white md:text-5xl">
+            <h2 className="mt-3 text-[30px] font-extrabold leading-[1.14] tracking-[-0.045em] text-white">
               The “Machine” Approach: Faster. Smoother. Cleaner.
             </h2>
+          </div>
 
-            <p className="mt-6 max-w-2xl text-sm leading-7 text-white/80">
-              Traditional brushes leave streaks, uneven layers, and delays.
-              Machine spray painting gives walls a cleaner, more consistent,
-              modern finish in a fraction of the time.
-            </p>
+          <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+            <div className="relative overflow-hidden">
+              <div className="grid h-[330px] grid-cols-2 overflow-hidden border border-white/15 md:h-[390px]">
+                <div className="relative">
+                  <Image
+                    src="/machine/before.jpg"
+                    alt="Painting project before"
+                    fill
+                    sizes="50vw"
+                    className="object-cover"
+                  />
 
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="bg-white/[0.05] p-6">
-                <strong className="block text-2xl font-black text-[#f5b400]">
-                  50%
-                </strong>
-                <span className="mt-2 block text-sm text-white/70">
-                  Faster application
-                </span>
-              </div>
+                  <span className="absolute bottom-4 left-4 bg-[#cc0f06] px-3.5 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white">
+                    Before
+                  </span>
+                </div>
 
-              <div className="bg-white/[0.05] p-6">
-                <strong className="block text-2xl font-black text-[#f5b400]">
-                  No
-                </strong>
-                <span className="mt-2 block text-sm text-white/70">
-                  Visible brush marks
-                </span>
-              </div>
+                <div className="relative">
+                  <Image
+                    src="/machine/after.jpg"
+                    alt="Painting project after"
+                    fill
+                    sizes="50vw"
+                    className="object-cover"
+                  />
 
-              <div className="border-l-4 border-[#cc0f06] bg-white/[0.05] p-6 sm:col-span-2">
-                <strong className="block text-2xl font-black text-[#f5b400]">
-                  Clean
-                </strong>
-                <span className="mt-2 block text-sm text-white/70">
-                  Professional finish
-                </span>
+                  <span className="absolute bottom-4 right-4 bg-[#f5b400] px-3.5 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#043079]">
+                    After
+                  </span>
+                </div>
               </div>
             </div>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <a
-                href="/gallery"
-                className="inline-flex items-center justify-center bg-[#cc0f06] px-7 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition duration-300 hover:bg-[#a90d06]"
-              >
-                View Full Gallery
-              </a>
+            <div>
+              {/* Desktop section introduction */}
+              <div className="hidden lg:block">
+                <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.25em] text-[#f5b400]">
+                  Ultimate Transformation
+                </p>
 
-              <a
-                href="/#quote"
-                className="inline-flex items-center justify-center border border-white/20 px-7 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition duration-300 hover:bg-white hover:text-[#043079]"
-              >
-                Get Quote
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+                <h2 className="max-w-2xl text-[33px] font-extrabold leading-[1.14] tracking-[-0.045em] text-white">
+                  The “Machine” Approach: Faster. Smoother. Cleaner.
+                </h2>
+              </div>
 
-      {/* CALCULATOR */}
-      <section id="calculator" className="bg-white px-5 py-20 md:px-8">
-        <div className="mx-auto max-w-3xl border border-[#043079]/10 bg-white p-7 shadow-xl shadow-slate-900/5 md:p-12">
-          <div className="text-center">
-            <p className="mb-4 text-[11px] font-extrabold uppercase tracking-[0.28em] text-[#cc0f06]">
-              Instant Quote Guide
-            </p>
+              <p className="mt-5 max-w-2xl text-[15px] leading-7 text-white/78">
+                Traditional brushes leave streaks, uneven layers, and delays.
+                Machine spray painting gives walls a cleaner, more consistent,
+                modern finish in a fraction of the time.
+              </p>
 
-            <h2 className="text-4xl font-black tracking-[-0.05em] text-[#043079] md:text-5xl">
-              Instant Cost Estimator
-            </h2>
+              <div className="mt-7 grid gap-4 sm:grid-cols-2">
+                <div className="border border-white/12 bg-[#0b4b9e] p-6">
+                  <strong className="block text-[28px] font-extrabold text-[#f5b400]">
+                    50%
+                  </strong>
 
-            <p className="mt-4 text-sm leading-7 text-slate-600">
-              Get a professional estimate for your project in seconds.
-            </p>
-          </div>
+                  <span className="mt-1 block text-[13px] font-semibold text-white/76">
+                    Faster application
+                  </span>
+                </div>
 
-          <div className="mt-9 grid gap-5 sm:grid-cols-2">
-            <label className="text-sm font-bold text-[#043079]">
-              Wall Width (m)
-              <input
-                value={width}
-                onChange={(event) => setWidth(event.target.value)}
-                inputMode="decimal"
-                className="mt-2 w-full border border-[#043079]/15 px-4 py-3 outline-none focus:border-[#cc0f06]"
-              />
-            </label>
+                <div className="border border-white/12 bg-[#0b4b9e] p-6">
+                  <strong className="block text-[28px] font-extrabold text-[#f5b400]">
+                    Zero
+                  </strong>
 
-            <label className="text-sm font-bold text-[#043079]">
-              Surface Type
-              <select
-                value={surface}
-                onChange={(event) => setSurface(event.target.value)}
-                className="mt-2 w-full border border-[#043079]/15 px-4 py-3 outline-none focus:border-[#cc0f06]"
-              >
-                <option value="interior">Interior Wall</option>
-                <option value="exterior">Exterior Wall</option>
-                <option value="roof">Roof</option>
-                <option value="mural">Wall Mural</option>
-              </select>
-            </label>
+                  <span className="mt-1 block text-[13px] font-semibold text-white/76">
+                    Visible brush marks
+                  </span>
+                </div>
 
-            <label className="text-sm font-bold text-[#043079]">
-              Wall Height (m)
-              <input
-                value={height}
-                onChange={(event) => setHeight(event.target.value)}
-                inputMode="decimal"
-                className="mt-2 w-full border border-[#043079]/15 px-4 py-3 outline-none focus:border-[#cc0f06]"
-              />
-            </label>
+                <div className="border border-white/12 border-l-[4px] border-l-[#cc0f06] bg-[#0b4b9e] p-6 sm:col-span-2">
+                  <strong className="block text-[23px] font-extrabold text-white">
+                    Clean &amp; Precise Finish
+                  </strong>
 
-            <label className="text-sm font-bold text-[#043079]">
-              Finish Type
-              <select
-                value={finish}
-                onChange={(event) => setFinish(event.target.value)}
-                className="mt-2 w-full border border-[#043079]/15 px-4 py-3 outline-none focus:border-[#cc0f06]"
-              >
-                <option value="standard">Standard Smooth Wall</option>
-                <option value="premium">Premium Finish</option>
-                <option value="decorative">Decorative Finish</option>
-                <option value="roof">Roof Painting</option>
-              </select>
-            </label>
-          </div>
+                  <span className="mt-1 block text-[13px] font-semibold text-white/76">
+                    Uniform coverage across every square metre
+                  </span>
+                </div>
+              </div>
 
-          <div className="mt-8 text-center">
-            <button
-              type="button"
-              className="inline-flex rounded-full bg-[#cc0f06] px-8 py-4 text-[11px] font-extrabold uppercase tracking-[0.14em] text-white transition duration-300 hover:bg-[#a90d06]"
-            >
-              Calculate Estimate
-            </button>
-          </div>
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="/gallery"
+                  className="inline-flex min-h-12 items-center justify-center bg-[#f5b400] px-7 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#043079] transition hover:bg-[#ffc62f]"
+                >
+                  View Full Gallery
+                </Link>
 
-          <div className="mt-8 border border-slate-100 border-t-4 border-t-[#f5b400] bg-white p-7 text-center shadow-md">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-              Estimated cost
-            </span>
-
-            <strong className="mt-2 block text-4xl font-black tracking-[-0.05em] text-[#cc0f06]">
-              KSh {estimate.toLocaleString()}
-            </strong>
-
-            <small className="mt-3 block text-xs leading-6 text-slate-500">
-              Final quote depends on surface condition, preparation work, access,
-              and site assessment.
-            </small>
-
-            <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
-              <a
-                href="/#quote"
-                className="inline-flex items-center justify-center bg-[#cc0f06] px-7 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition duration-300 hover:bg-[#a90d06]"
-              >
-                Request Quotation
-              </a>
-
-              <a
-                href="/#site-visit"
-                className="inline-flex items-center justify-center border border-slate-200 bg-white px-7 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#043079] transition duration-300 hover:border-[#cc0f06] hover:text-[#cc0f06]"
-              >
-                Book Site Visit
-              </a>
+                <a
+                  href="#quote"
+                  className="inline-flex min-h-12 items-center justify-center border border-white/35 px-7 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition hover:bg-white hover:text-[#043079]"
+                >
+                  Get Quote
+                </a>
+              </div>
             </div>
           </div>
         </div>
       </section>
+
+      <EstimatorSection />
 
       {/* PROCESS */}
       <section
         id="process"
-        className="bg-[#f8f8f5] px-5 py-20 text-[#043079] md:px-8"
+        className="bg-white px-5 py-16 text-[#043079] md:px-8 md:py-20"
       >
-        <div className="mx-auto max-w-7xl text-center">
-          <p className="mb-4 text-[11px] font-extrabold uppercase tracking-[0.28em] text-[#cc0f06]">
+        <div className="mx-auto max-w-[1180px] text-center">
+          <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.25em] text-[#cc0f06]">
             Our Process
           </p>
 
-          <h2 className="text-4xl font-black tracking-[-0.05em] text-[#043079] md:text-5xl">
+          <h2 className="text-[30px] font-extrabold tracking-[-0.04em] text-[#043079] md:text-[33px]">
             How We Deliver a Clean Finish
           </h2>
 
-          <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-slate-600">
-            Our streamlined process ensures maximum quality with minimum disruption.
+          <p className="mx-auto mt-4 max-w-2xl text-[15px] leading-7 text-slate-600">
+            Our streamlined process ensures maximum quality with minimum
+            disruption.
           </p>
 
-          <div className="mt-14 grid gap-6 border-[#043079]/10 md:grid-cols-5 md:border-t">
-            {process.map((step) => (
+          <div className="relative mt-12 grid gap-4 md:grid-cols-5">
+            <div className="pointer-events-none absolute left-10 right-10 top-5 hidden border-t border-dashed border-[#043079]/20 md:block" />
+
+            {process.map((step, index) => (
               <article
                 key={step.title}
-                className="border border-[#043079]/10 bg-white p-6 md:border-0 md:bg-transparent"
+                className={[
+                  "relative z-10 border bg-white p-5 text-left transition md:text-center",
+                  index === 3
+                    ? "border-[#f5b400] shadow-[0_15px_35px_rgba(245,180,0,0.13)]"
+                    : "border-[#043079]/10 hover:border-[#cc0f06]/35",
+                ].join(" ")}
               >
-                <span className="mx-auto -mt-0 mb-5 grid h-11 w-11 place-items-center rounded-full bg-[#f5b400] text-[10px] font-black text-[#043079] md:-mt-[44px]">
+                <span
+                  className={[
+                    "mb-4 grid h-10 w-10 place-items-center text-[11px] font-extrabold md:mx-auto",
+                    index === 3
+                      ? "bg-[#f5b400] text-[#043079]"
+                      : "bg-[#043079] text-white",
+                  ].join(" ")}
+                >
                   {step.icon}
                 </span>
 
-                <h3 className="text-base font-black text-[#043079]">
+                <h3 className="text-[17px] font-extrabold text-[#043079]">
                   {step.title}
                 </h3>
 
-                <p className="mt-3 text-sm leading-6 text-slate-600">
+                <p className="mt-2 text-[13px] leading-5 text-slate-600">
                   {step.text}
                 </p>
               </article>
             ))}
           </div>
 
-          <div className="mt-12 flex flex-col justify-center gap-3 sm:flex-row">
+          <div className="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
             <a
-              href="/#site-visit"
-              className="inline-flex items-center justify-center bg-[#cc0f06] px-7 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition duration-300 hover:bg-[#a90d06]"
+              href="#site-visit"
+              className="inline-flex min-h-12 items-center justify-center bg-[#f5b400] px-7 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#043079] transition hover:bg-[#ffc62f]"
             >
               Book Site Visit
             </a>
 
-            <a
-              href="/#contact"
-              className="inline-flex items-center justify-center border border-[#043079]/20 px-7 py-3 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#043079] transition duration-300 hover:border-[#cc0f06] hover:text-[#cc0f06]"
+            <Link
+              href="/contact-us"
+              className="inline-flex min-h-12 items-center justify-center border border-[#043079]/25 px-7 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#043079] transition hover:border-[#0453b1] hover:bg-[#0453b1] hover:text-white"
             >
               Contact Us
-            </a>
+            </Link>
           </div>
         </div>
       </section>
+
       <FAQSection />
+
       <ContactSection whatsappMessage={whatsappMessage} />
     </main>
   );

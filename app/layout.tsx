@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
+import { Nunito_Sans } from "next/font/google";
+
 import "./globals.css";
+import SiteFooter from "@/components/SiteFooter";
 import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import MachineChatbot from "@/components/MachineChatbot";
+
+const nunitoSans = Nunito_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800", "900"],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://themachinepainting.com"),
@@ -43,7 +52,8 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "The Machine Painting Co Ltd | Beautiful Structures, Sprayed Perfectly",
+    title:
+      "The Machine Painting Co Ltd | Beautiful Structures, Sprayed Perfectly",
     description:
       "Professional spray painting, wall finishing, commercial painting, renovation painting, and surface preparation services for homes, offices, apartments, buildings, warehouses, and projects.",
     url: "https://themachinepainting.com",
@@ -62,7 +72,8 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "The Machine Painting Co Ltd | Beautiful Structures, Sprayed Perfectly",
+    title:
+      "The Machine Painting Co Ltd | Beautiful Structures, Sprayed Perfectly",
     description:
       "Professional spray painting, painting packages, gallery transformations, project videos, quotations, and site visit bookings.",
     images: ["/machine/og-image.png"],
@@ -71,7 +82,11 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.ico" },
-      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+      {
+        url: "/icon.png",
+        type: "image/png",
+        sizes: "512x512",
+      },
     ],
     shortcut: "/favicon.ico",
     apple: "/icon.png",
@@ -90,8 +105,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${nunitoSans.className} antialiased`}>
         {children}
+        <SiteFooter />
         <FloatingWhatsApp />
         <MachineChatbot />
       </body>
