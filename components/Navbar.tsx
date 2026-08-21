@@ -18,7 +18,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
-  const quoteHref = pathname === "/" ? "#quote" : "/#quote";
+  const quoteHref = pathname === "/" ? "#estimator" : "/#estimator";
   const contactHref = pathname === "/" ? "#contact" : "/#contact";
 
   const closeMenu = () => setOpen(false);

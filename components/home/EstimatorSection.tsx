@@ -46,8 +46,8 @@ export default function EstimatorSection() {
 
   return (
     <section
-      id="quote"
-      className="bg-[#f7f9fc] px-5 py-14 md:px-8 md:py-20"
+      id="estimator"
+      className="scroll-mt-[96px] bg-[#f7f9fc] px-5 py-14 md:px-8 md:py-20"
     >
       <div className="mx-auto max-w-[1180px]">
         <div className="text-center">
@@ -206,7 +206,7 @@ export default function EstimatorSection() {
             </p>
 
             <a
-              href="#contact"
+              href="#quote"
               className="mt-4 inline-flex min-h-11 items-center justify-center bg-[#f5b400] px-5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-[#043079] transition hover:bg-white"
             >
               Request Detailed Quotation

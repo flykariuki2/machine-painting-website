@@ -148,7 +148,6 @@ export default function ContactSection({ whatsappMessage }: ContactSectionProps)
 
   return (
     <>
-      <div id="quote" className="scroll-mt-[96px]" />
       <div id="site-visit" className="scroll-mt-[96px]" />
       <section className="section-shell bg-white">
         <div className="site-container relative overflow-hidden bg-[#043079] px-5 py-10 text-white shadow-[0_28px_80px_rgba(4,48,121,.18)] sm:px-6 md:px-10 md:py-12 lg:px-12">
@@ -162,8 +161,9 @@ export default function ContactSection({ whatsappMessage }: ContactSectionProps)
               </a>
             </div>
 
-            {formState === "success" ? (
-              <div className="border-t-4 border-[#f5b400] bg-white p-6 text-center text-slate-800 shadow-2xl sm:p-8">
+            <div id="quote" className="scroll-mt-[96px]">
+              {formState === "success" ? (
+                <div className="border-t-4 border-[#f5b400] bg-white p-6 text-center text-slate-800 shadow-2xl sm:p-8">
                 <span className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-[#0453b1]/10 text-[#0453b1]"><CheckCircle2 aria-hidden="true" className="h-7 w-7" /></span>
                 <h3 className="mt-5 text-2xl font-black tracking-[-.03em] text-[#043079]">Request received</h3>
                 <p aria-live="polite" className="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-600">{feedback}</p>
@@ -171,9 +171,9 @@ export default function ContactSection({ whatsappMessage }: ContactSectionProps)
                   <a href={savedWhatsappLink} target="_blank" rel="noreferrer" className="inline-flex min-h-12 items-center justify-center gap-2 bg-[#f5b400] px-5 text-xs font-extrabold text-[#043079]"><MessageCircle aria-hidden="true" className="h-4 w-4" /> Follow up on WhatsApp</a>
                   <button type="button" onClick={resetForm} className="min-h-12 border border-[#043079]/20 px-5 text-xs font-extrabold text-[#043079] transition hover:border-[#043079]">Submit another request</button>
                 </div>
-              </div>
-            ) : (
-              <form className="border-t-4 border-[#cc0f06] bg-white p-5 text-slate-800 shadow-2xl sm:p-6 md:p-8" onSubmit={handleSubmit}>
+                </div>
+              ) : (
+                <form className="border-t-4 border-[#cc0f06] bg-white p-5 text-slate-800 shadow-2xl sm:p-6 md:p-8" onSubmit={handleSubmit}>
                 <p className="mb-5 text-xs leading-5 text-slate-500"><span className="font-extrabold text-[#cc0f06]">*</span> Required fields</p>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className={labelClass}>Full Name <span><input required value={name} onChange={(event) => setName(event.target.value)} placeholder="Your full name" autoComplete="name" className={fieldClass} /></span></label>
@@ -190,8 +190,9 @@ export default function ContactSection({ whatsappMessage }: ContactSectionProps)
                 {formState === "error" && <p aria-live="polite" className="mt-4 border-l-4 border-[#cc0f06] bg-[#cc0f06]/[.05] px-4 py-3 text-sm font-semibold leading-5 text-[#a70d06]">{feedback}</p>}
                 <button type="submit" disabled={submitting} className="mt-5 inline-flex min-h-12 w-full items-center justify-center bg-[#043079] px-6 text-xs font-extrabold uppercase tracking-[0.12em] text-white transition hover:bg-[#f5b400] hover:text-[#043079] disabled:cursor-not-allowed disabled:opacity-60">{submitting ? "Submitting request..." : "Submit Request"}</button>
                 <p className="mt-3 text-center text-[11px] leading-5 text-slate-500">Your request is saved securely before any WhatsApp follow-up.</p>
-              </form>
-            )}
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </section>
