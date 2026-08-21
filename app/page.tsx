@@ -6,6 +6,7 @@ import FAQSection from "@/components/FAQSection";
 import Navbar from "@/components/Navbar";
 import EstimatorSection from "@/components/home/EstimatorSection";
 import HeroSlider from "@/components/home/HeroSlider";
+import ProjectsCarousel from "@/components/home/ProjectsCarousel";
 
 const services = [
   {
@@ -139,6 +140,21 @@ const projects = [
     title: "Commercial Wall Finish",
     category: "Commercial project",
     image: "/machine/project-003.jpg",
+  },
+  {
+    title: "Parking Lot Painting",
+    category: "Parking & Markings",
+    image: "/machine/parking-lot-painting.png",
+  },
+  {
+    title: "Warehouse Exterior Painting",
+    category: "Industrial Exterior",
+    image: "/machine/warehouse-exterior-painting.png",
+  },
+  {
+    title: "Warehouse Interior Finish",
+    category: "Industrial Interior",
+    image: "/machine/warehouse-interior-finish.png",
   },
 ];
 
@@ -339,37 +355,7 @@ export default function Home() {
             </h2>
           </div>
 
-          <div className="mt-10 grid gap-6 md:mt-12 md:grid-cols-3">
-            {projects.map((project) => (
-              <article
-                key={project.title}
-                className="group overflow-hidden border border-[#043079]/10 bg-white transition duration-300 hover:-translate-y-1 hover:border-[#cc0f06]/35 hover:shadow-[0_20px_45px_rgba(4,48,121,0.10)]"
-              >
-                <div className="relative aspect-[4/3] overflow-hidden bg-slate-100">
-                  <Image
-                    src={project.image}
-                    alt={project.title}
-                    fill
-                    quality={100}
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover object-center transition duration-500 group-hover:scale-105"
-                  />
-
-                  <span className="absolute left-4 top-4 bg-[#043079]/90 px-3 py-1.5 text-[9px] font-extrabold uppercase tracking-[0.14em] text-white">
-                    {project.category}
-                  </span>
-                </div>
-
-                <div className="p-5 md:p-6">
-                  <h3 className="text-[19px] font-extrabold tracking-[-0.025em] text-[#043079]">
-                    {project.title}
-                  </h3>
-
-                  <span className="mt-4 block h-[3px] w-8 bg-[#f5b400]" />
-                </div>
-              </article>
-            ))}
-          </div>
+          <ProjectsCarousel projects={projects} />
 
           {/* CENTRED PROJECT CTA */}
           <div className="mt-12 border border-[#043079]/10 bg-[#f7f9fc] px-5 py-10 text-center md:px-10 md:py-12">
@@ -395,6 +381,52 @@ export default function Home() {
               >
                 Request Similar Finish
               </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FEATURED PROJECT VIDEO */}
+      <section className="bg-[#f7f9fc] px-5 py-16 md:px-8 md:py-20">
+        <div className="mx-auto max-w-[1180px]">
+          <div className="grid gap-8 lg:grid-cols-[0.72fr_1.28fr] lg:items-center">
+            <div>
+              <p className="mb-3 text-[11px] font-extrabold uppercase tracking-[0.25em] text-[#cc0f06]">
+                Work in Motion
+              </p>
+
+              <h2 className="max-w-[520px] text-[30px] font-extrabold leading-[1.12] tracking-[-0.04em] text-[#043079] md:text-[33px]">
+                See the painting process beyond the finished photo.
+              </h2>
+
+              <p className="mt-5 max-w-[500px] text-[15px] leading-7 text-slate-600">
+                Watch our team working on a real painting project and see the
+                preparation, application, and attention to finish behind the
+                final result.
+              </p>
+
+              <Link
+                href="/projects"
+                className="mt-7 inline-flex min-h-12 items-center justify-center bg-[#043079] px-7 text-[10px] font-extrabold uppercase tracking-[0.14em] text-white transition hover:bg-[#0453b1]"
+              >
+                Explore More Projects
+              </Link>
+            </div>
+
+            <div className="overflow-hidden border border-[#043079]/10 bg-[#043079] shadow-[0_22px_55px_rgba(4,48,121,0.12)]">
+              <video
+                controls
+                playsInline
+                preload="metadata"
+                className="aspect-video w-full bg-black object-cover"
+              >
+                <source
+                  src="/machine/project-video-interior-painting.mp4"
+                  type="video/mp4"
+                />
+
+                Your browser does not support the video element.
+              </video>
             </div>
           </div>
         </div>

@@ -1,17 +1,20 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { CheckCircle2 } from "lucide-react";
+import { FormEvent, useRef, useState } from "react";
 import Navbar from "@/components/Navbar";
+import { submitPainterApplication } from "@/lib/supabase/submissions";
 
 const skills = [
-  "Interior & Exterior Wall Painting",
-  "Special Effect",
-  "Wallmaster",
-  "Masonry Works",
-  "Sprayer",
-  "Skimming",
-  "Electrical Works",
-  "Plumbing Works",
+  "Interior Painting",
+  "Exterior Painting",
+  "Machine Spray Painting",
+  "Wall Skimming / Surface Preparation",
+  "Commercial Painting",
+  "Renovation Painting",
+  "Parking / Line Marking",
+  "Industrial / Warehouse Painting",
+  "Other",
 ];
 
 const expectations = [
@@ -35,9 +38,16 @@ export default function CareersPage() {
   const [county, setCounty] = useState("");
   const [estate, setEstate] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [yearsExperience, setYearsExperience] = useState("");
+  const [availability, setAvailability] = useState("");
+  const [sprayExperience, setSprayExperience] = useState("");
+  const [message, setMessage] = useState("");
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState("");
+  const [applicationSent, setApplicationSent] = useState(false);
+  const lastSubmission = useRef(0);
 
   const canSubmit =
     fullName.trim() &&
@@ -64,19 +74,29 @@ export default function CareersPage() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setApplicationSent(false);
 
     if (!canSubmit) {
       setFeedback("Please fill all fields and select exactly two skills.");
       return;
     }
 
-    const webhookUrl =
-      process.env.NEXT_PUBLIC_PAINTER_REGISTRATION_WEBHOOK;
-
-    if (!webhookUrl) {
-      setFeedback(
-        "Form is ready. Add the n8n webhook URL to activate submissions.",
-      );
+    const parsedAge = Number(age);
+    if (!Number.isInteger(parsedAge) || parsedAge < 18 || parsedAge > 100) {
+      setFeedback("Please enter a valid age between 18 and 100.");
+      return;
+    }
+    if (phone.trim().length < 7) {
+      setFeedback("Please enter a valid phone number.");
+      return;
+    }
+    const parsedExperience = yearsExperience ? Number(yearsExperience) : null;
+    if (parsedExperience !== null && (!Number.isInteger(parsedExperience) || parsedExperience < 0 || parsedExperience > 80)) {
+      setFeedback("Please enter valid years of experience.");
+      return;
+    }
+    if (Date.now() - lastSubmission.current < 10000) {
+      setFeedback("Your application was just submitted. Please wait before trying again.");
       return;
     }
 
@@ -84,35 +104,34 @@ export default function CareersPage() {
     setFeedback("");
 
     try {
-      const response = await fetch(webhookUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          submitted_at: new Date().toISOString(),
-          name: fullName.trim(),
-          age: age.trim(),
-          county: county.trim(),
-          estate: estate.trim(),
-          phone_number: phone.trim(),
-          skill_1: selectedSkills[0],
-          skill_2: selectedSkills[1],
-          status: "new",
-          source: "website_join_us_form",
-        }),
+      await submitPainterApplication({
+        full_name: fullName.trim(),
+        age: parsedAge,
+        county: county.trim(),
+        location: estate.trim(),
+        phone: phone.trim(),
+        email: email.trim() || null,
+        specialty: selectedSkills.join(", "),
+        years_experience: parsedExperience,
+        availability: availability || null,
+        has_spray_painting_experience:
+          sprayExperience === "yes" ? true : sprayExperience === "no" ? false : null,
+        message: message.trim() || null,
+        source: "careers_form",
       });
-
-      if (!response.ok) {
-        throw new Error("Submission failed");
-      }
-
-      setFeedback("Application submitted successfully.");
+      lastSubmission.current = Date.now();
+      setApplicationSent(true);
+      setFeedback("Application received. Thank you for your interest in joining The Machine Painting Co Ltd painter network.");
       setFullName("");
       setAge("");
       setCounty("");
       setEstate("");
       setPhone("");
+      setEmail("");
+      setYearsExperience("");
+      setAvailability("");
+      setSprayExperience("");
+      setMessage("");
       setSelectedSkills([]);
     } catch {
       setFeedback(
@@ -235,6 +254,7 @@ export default function CareersPage() {
           >
             <div className="grid gap-4 sm:grid-cols-2">
               <input
+                required
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
                 placeholder="Name"
@@ -244,15 +264,20 @@ export default function CareersPage() {
               />
 
               <input
+                required
                 value={age}
                 onChange={(event) => setAge(event.target.value)}
                 placeholder="Age"
                 aria-label="Age"
                 inputMode="numeric"
+                type="number"
+                min="18"
+                max="100"
                 className="h-11 border border-[#043079]/30 bg-white px-4 text-[15px] font-normal text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
               />
 
               <input
+                required
                 value={county}
                 onChange={(event) => setCounty(event.target.value)}
                 placeholder="County"
@@ -261,6 +286,7 @@ export default function CareersPage() {
               />
 
               <input
+                required
                 value={estate}
                 onChange={(event) => setEstate(event.target.value)}
                 placeholder="Estate You Live In"
@@ -269,14 +295,61 @@ export default function CareersPage() {
               />
 
               <input
+                required
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
                 placeholder="Tel No."
                 aria-label="Telephone number"
                 type="tel"
                 autoComplete="tel"
-                className="h-11 border border-[#043079]/30 bg-white px-4 text-[15px] font-normal text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400] sm:col-span-2"
+                className="h-11 border border-[#043079]/30 bg-white px-4 text-[15px] font-normal text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
               />
+
+              <input
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder="Email Address (Optional)"
+                aria-label="Email address"
+                type="email"
+                autoComplete="email"
+                className="h-11 border border-[#043079]/30 bg-white px-4 text-[15px] font-normal text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
+              />
+
+              <input
+                value={yearsExperience}
+                onChange={(event) => setYearsExperience(event.target.value)}
+                placeholder="Years of Experience (Optional)"
+                aria-label="Years of experience"
+                type="number"
+                min="0"
+                max="80"
+                className="h-11 border border-[#043079]/30 bg-white px-4 text-[15px] font-normal text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
+              />
+
+              <select
+                value={availability}
+                onChange={(event) => setAvailability(event.target.value)}
+                aria-label="Availability"
+                className="h-11 border border-[#043079]/30 bg-white px-4 text-[15px] font-normal text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
+              >
+                <option value="">Availability (Optional)</option>
+                <option>Available Immediately</option>
+                <option>Available Within 1 Week</option>
+                <option>Available Within 2 Weeks</option>
+                <option>Weekends Only</option>
+                <option>Project Dependent</option>
+              </select>
+
+              <select
+                value={sprayExperience}
+                onChange={(event) => setSprayExperience(event.target.value)}
+                aria-label="Machine spray painting experience"
+                className="h-11 border border-[#043079]/30 bg-white px-4 text-[15px] font-normal text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
+              >
+                <option value="">Machine Spray Experience (Optional)</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
             </div>
 
             <div className="mt-6">
@@ -333,6 +406,14 @@ export default function CareersPage() {
               </div>
             </div>
 
+            <textarea
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+              placeholder="Short additional information (Optional)"
+              aria-label="Additional information"
+              className="mt-5 min-h-[96px] w-full resize-y border border-[#043079]/30 bg-white px-4 py-3 text-[15px] font-normal text-slate-900 outline-none transition-all focus:border-[#f5b400] focus:ring-1 focus:ring-[#f5b400]"
+            />
+
             <button
               type="submit"
               disabled={!canSubmit}
@@ -346,12 +427,17 @@ export default function CareersPage() {
             </button>
 
             {feedback && (
-              <p
+              <div
                 aria-live="polite"
-                className="mt-3 text-center text-xs font-semibold leading-5 text-[#043079]"
+                className={`mt-4 border-l-4 px-4 py-3 text-sm font-semibold leading-6 ${
+                  applicationSent
+                    ? "border-[#0453b1] bg-[#0453b1]/[.06] text-[#043079]"
+                    : "border-[#cc0f06] bg-[#cc0f06]/[.05] text-[#a70d06]"
+                }`}
               >
+                {applicationSent && <CheckCircle2 aria-hidden="true" className="mr-2 inline h-4 w-4 align-[-2px]" />}
                 {feedback}
-              </p>
+              </div>
             )}
 
             <p className="mt-3 text-center text-xs leading-5 text-slate-500">

@@ -29,6 +29,8 @@ type HeroSlide = {
   tags: string[];
 };
 
+type TransitionDirection = "next" | "previous";
+
 const slides: HeroSlide[] = [
   {
     id: "exterior",
@@ -72,33 +74,61 @@ const slides: HeroSlide[] = [
   },
 ];
 
-const AUTO_PLAY_DELAY = 5000;
-const INTERACTION_PAUSE = 6000;
+const AUTO_PLAY_DELAY = 7000;
+const INTERACTION_PAUSE = 6500;
 
 export default function HeroSlider() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [previousIndex, setPreviousIndex] = useState<number | null>(null);
+  const [direction, setDirection] =
+    useState<TransitionDirection>("next");
   const [isPaused, setIsPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
 
   const touchStartX = useRef<number | null>(null);
   const resumeTimer = useRef<number | null>(null);
 
-  const showSlide = useCallback((index: number) => {
-    const normalizedIndex =
-      ((index % slides.length) + slides.length) % slides.length;
+  const changeSlide = useCallback(
+    (
+      nextIndex: number,
+      nextDirection: TransitionDirection,
+    ) => {
+      const normalizedIndex =
+        ((nextIndex % slides.length) + slides.length) %
+        slides.length;
 
-    setActiveIndex(normalizedIndex);
-  }, []);
+      if (normalizedIndex === activeIndex) {
+        return;
+      }
+
+      setPreviousIndex(activeIndex);
+      setDirection(nextDirection);
+      setActiveIndex(normalizedIndex);
+    },
+    [activeIndex],
+  );
+
+  const showSlide = useCallback(
+    (index: number) => {
+      if (index === activeIndex) {
+        return;
+      }
+
+      const nextDirection =
+        index > activeIndex ? "next" : "previous";
+
+      changeSlide(index, nextDirection);
+    },
+    [activeIndex, changeSlide],
+  );
 
   const showNextSlide = useCallback(() => {
-    setActiveIndex((current) => (current + 1) % slides.length);
-  }, []);
+    changeSlide(activeIndex + 1, "next");
+  }, [activeIndex, changeSlide]);
 
   const showPreviousSlide = useCallback(() => {
-    setActiveIndex(
-      (current) => (current - 1 + slides.length) % slides.length,
-    );
-  }, []);
+    changeSlide(activeIndex - 1, "previous");
+  }, [activeIndex, changeSlide]);
 
   const pauseAfterInteraction = useCallback(() => {
     setIsPaused(true);
@@ -137,7 +167,11 @@ export default function HeroSlider() {
   }, []);
 
   useEffect(() => {
-    if (isPaused || reducedMotion || slides.length < 2) {
+    if (
+      isPaused ||
+      reducedMotion ||
+      slides.length < 2
+    ) {
       return;
     }
 
@@ -177,14 +211,16 @@ export default function HeroSlider() {
   const handleTouchStart = (
     event: TouchEvent<HTMLElement>,
   ) => {
-    touchStartX.current = event.touches[0]?.clientX ?? null;
+    touchStartX.current =
+      event.touches[0]?.clientX ?? null;
   };
 
   const handleTouchEnd = (
     event: TouchEvent<HTMLElement>,
   ) => {
     const startX = touchStartX.current;
-    const endX = event.changedTouches[0]?.clientX ?? null;
+    const endX =
+      event.changedTouches[0]?.clientX ?? null;
 
     touchStartX.current = null;
 
@@ -217,6 +253,17 @@ export default function HeroSlider() {
     >
       {slides.map((slide, index) => {
         const isActive = activeIndex === index;
+        const isPrevious = previousIndex === index;
+
+        const incomingX =
+          direction === "next"
+            ? "-translate-x-[42px]"
+            : "translate-x-[42px]";
+
+        const mobileIncomingX =
+          direction === "next"
+            ? "-translate-x-[26px]"
+            : "translate-x-[26px]";
 
         return (
           <article
@@ -226,45 +273,59 @@ export default function HeroSlider() {
               "absolute inset-0",
               reducedMotion
                 ? "transition-none"
-                : "transition-opacity duration-[1300ms] ease-in-out",
+                : "transition-opacity duration-[2200ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
               isActive
                 ? "pointer-events-auto z-10 opacity-100"
-                : "pointer-events-none z-0 opacity-0",
+                : isPrevious
+                  ? "pointer-events-none z-20 opacity-0"
+                  : "pointer-events-none z-0 opacity-0",
             ].join(" ")}
           >
             {/* MOBILE PORTRAIT IMAGE */}
-            <div className="absolute inset-0 bg-[#dbe5f1] md:hidden">
+            <div
+              className={[
+                "absolute inset-0 bg-[#dbe5f1] md:hidden",
+                reducedMotion
+                  ? "transition-none"
+                  : "transition-[transform,opacity] duration-[2400ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
+                isActive
+                  ? "translate-x-0 translate-y-0 scale-100 opacity-100"
+                  : isPrevious
+                    ? "translate-x-0 translate-y-0 scale-100 opacity-0"
+                    : `${mobileIncomingX} translate-y-4 scale-[1.006] opacity-0`,
+              ].join(" ")}
+            >
               <Image
                 src={slide.mobileImage}
                 alt={slide.imageAlt}
                 fill
                 priority={index === 0}
                 sizes="100vw"
-                className={[
-                  "object-contain object-center",
-                  reducedMotion
-                    ? "transition-none"
-                    : "transition-transform duration-[6200ms] ease-out",
-                  isActive ? "scale-[1.01]" : "scale-100",
-                ].join(" ")}
+                className="object-contain object-center"
               />
             </div>
 
             {/* DESKTOP LANDSCAPE IMAGE */}
-            <div className="absolute inset-0 hidden bg-[#043079] md:block">
+            <div
+              className={[
+                "absolute inset-0 hidden bg-[#043079] md:block",
+                reducedMotion
+                  ? "transition-none"
+                  : "transition-[transform,opacity] duration-[2400ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
+                isActive
+                  ? "translate-x-0 translate-y-0 scale-100 opacity-100"
+                  : isPrevious
+                    ? "translate-x-0 translate-y-0 scale-100 opacity-0"
+                    : `${incomingX} translate-y-5 scale-[1.006] opacity-0`,
+              ].join(" ")}
+            >
               <Image
                 src={slide.desktopImage}
                 alt={slide.imageAlt}
                 fill
                 priority={index === 0}
                 sizes="100vw"
-                className={[
-                  "object-cover object-center",
-                  reducedMotion
-                    ? "transition-none"
-                    : "transition-transform duration-[6200ms] ease-out",
-                  isActive ? "scale-[1.012]" : "scale-100",
-                ].join(" ")}
+                className="object-cover object-center"
               />
             </div>
 
@@ -277,18 +338,21 @@ export default function HeroSlider() {
 
             {/* MOBILE TEXT BLOCK */}
             <div className="relative z-20 h-full md:hidden">
-              <div
-                className={[
-                  "w-[78%] max-w-[330px] px-5 pt-[clamp(36px,5.5vh,54px)]",
-                  reducedMotion
-                    ? "transition-none"
-                    : "transition-all duration-[1000ms] ease-out",
-                  isActive
-                    ? "translate-x-0 opacity-100"
-                    : "-translate-x-5 opacity-0",
-                ].join(" ")}
-              >
-                <div className="flex items-center gap-3">
+              <div className="w-[78%] max-w-[330px] px-5 pt-[clamp(36px,5.5vh,54px)]">
+                {/* EYEBROW */}
+                <div
+                  className={[
+                    "flex items-center gap-3",
+                    reducedMotion
+                      ? "transition-none"
+                      : "transition-[transform,opacity] duration-[1650ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
+                    isActive
+                      ? "translate-x-0 opacity-100 delay-[250ms]"
+                      : isPrevious
+                        ? "translate-x-0 opacity-0"
+                        : `${mobileIncomingX} opacity-0`,
+                  ].join(" ")}
+                >
                   <span className="h-[3px] w-9 shrink-0 bg-[#cc0f06]" />
 
                   <p className="text-[8px] font-extrabold uppercase leading-4 tracking-[0.15em] text-[#f5b400] min-[390px]:text-[9px]">
@@ -296,37 +360,80 @@ export default function HeroSlider() {
                   </p>
                 </div>
 
+                {/* TITLE */}
                 <h1 className="mt-3 font-extrabold leading-[1.01] tracking-[-0.035em] text-white">
-                  <span className="block text-[27px] min-[390px]:text-[29px]">
-                    {slide.mobileTitle ?? slide.title}
+                  <span
+                    className={[
+                      "block text-[27px] min-[390px]:text-[29px]",
+                      reducedMotion
+                        ? "transition-none"
+                        : "transition-[transform,opacity] duration-[1750ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
+                      isActive
+                        ? "translate-x-0 opacity-100 delay-[400ms]"
+                        : isPrevious
+                          ? "translate-x-0 opacity-0"
+                          : `${mobileIncomingX} opacity-0`,
+                    ].join(" ")}
+                  >
+                    {slide.mobileTitle ??
+                      slide.title}
                   </span>
 
-                  <span className="block whitespace-nowrap text-[25px] text-[#f5b400] min-[390px]:text-[27px]">
+                  <span
+                    className={[
+                      "block whitespace-nowrap text-[25px] text-[#f5b400] min-[390px]:text-[27px]",
+                      reducedMotion
+                        ? "transition-none"
+                        : "transition-[transform,opacity] duration-[1800ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
+                      isActive
+                        ? "translate-x-0 opacity-100 delay-[520ms]"
+                        : isPrevious
+                          ? "translate-x-0 opacity-0"
+                          : `${mobileIncomingX} opacity-0`,
+                    ].join(" ")}
+                  >
                     {slide.mobileHighlightedTitle ??
                       slide.highlightedTitle}
                   </span>
                 </h1>
 
-                <p className="mt-3 max-w-[300px] text-[12px] leading-[19px] text-white/92 min-[390px]:text-[12.5px]">
-                  {slide.mobileDescription ?? slide.description}
+                {/* DESCRIPTION */}
+                <p
+                  className={[
+                    "mt-3 max-w-[300px] text-[12px] leading-[19px] text-white/92 min-[390px]:text-[12.5px]",
+                    reducedMotion
+                      ? "transition-none"
+                      : "transition-[transform,opacity] duration-[1800ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
+                    isActive
+                      ? "translate-x-0 opacity-100 delay-[680ms]"
+                      : isPrevious
+                        ? "translate-x-0 opacity-0"
+                        : `${mobileIncomingX} opacity-0`,
+                  ].join(" ")}
+                >
+                  {slide.mobileDescription ??
+                    slide.description}
                 </p>
               </div>
             </div>
 
-            {/* DESKTOP CONTENT BLOCK — unchanged */}
+            {/* DESKTOP CONTENT BLOCK */}
             <div className="relative z-20 mx-auto hidden h-full w-full max-w-[1220px] items-center px-14 xl:px-0 md:flex">
-              <div
-                className={[
-                  "w-full max-w-[580px]",
-                  reducedMotion
-                    ? "transition-none"
-                    : "transition-all duration-[1000ms] ease-out",
-                  isActive
-                    ? "translate-x-0 opacity-100"
-                    : "-translate-x-5 opacity-0",
-                ].join(" ")}
-              >
-                <div className="flex items-center gap-3">
+              <div className="w-full max-w-[580px]">
+                {/* EYEBROW */}
+                <div
+                  className={[
+                    "flex items-center gap-3",
+                    reducedMotion
+                      ? "transition-none"
+                      : "transition-[transform,opacity] duration-[1650ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
+                    isActive
+                      ? "translate-x-0 opacity-100 delay-[250ms]"
+                      : isPrevious
+                        ? "translate-x-0 opacity-0"
+                        : `${incomingX} opacity-0`,
+                  ].join(" ")}
+                >
                   <span className="h-[3px] w-11 shrink-0 bg-[#cc0f06]" />
 
                   <p className="text-[11px] font-extrabold uppercase leading-4 tracking-[0.16em] text-[#f5b400]">
@@ -334,28 +441,82 @@ export default function HeroSlider() {
                   </p>
                 </div>
 
+                {/* TITLE */}
                 <h1 className="mt-5 font-extrabold leading-[1.02] tracking-[-0.035em] text-white">
-                  <span className="block text-[47px]">
+                  <span
+                    className={[
+                      "block text-[47px]",
+                      reducedMotion
+                        ? "transition-none"
+                        : "transition-[transform,opacity] duration-[1750ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
+                      isActive
+                        ? "translate-x-0 opacity-100 delay-[400ms]"
+                        : isPrevious
+                          ? "translate-x-0 opacity-0"
+                          : `${incomingX} opacity-0`,
+                    ].join(" ")}
+                  >
                     {slide.title}
                   </span>
 
-                  <span className="block text-[47px] text-[#f5b400]">
+                  <span
+                    className={[
+                      "block text-[47px] text-[#f5b400]",
+                      reducedMotion
+                        ? "transition-none"
+                        : "transition-[transform,opacity] duration-[1800ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
+                      isActive
+                        ? "translate-x-0 opacity-100 delay-[520ms]"
+                        : isPrevious
+                          ? "translate-x-0 opacity-0"
+                          : `${incomingX} opacity-0`,
+                    ].join(" ")}
+                  >
                     {slide.highlightedTitle}
                   </span>
                 </h1>
 
-                <p className="mt-5 max-w-[530px] text-[15px] leading-[25px] text-white/92">
+                {/* DESCRIPTION */}
+                <p
+                  className={[
+                    "mt-5 max-w-[530px] text-[15px] leading-[25px] text-white/92",
+                    reducedMotion
+                      ? "transition-none"
+                      : "transition-[transform,opacity] duration-[1800ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
+                    isActive
+                      ? "translate-x-0 opacity-100 delay-[680ms]"
+                      : isPrevious
+                        ? "translate-x-0 opacity-0"
+                        : `${incomingX} opacity-0`,
+                  ].join(" ")}
+                >
                   {slide.description}
                 </p>
 
-                <div className="mt-7 flex flex-wrap gap-3">
+                {/* BUTTONS */}
+                <div
+                  className={[
+                    "mt-7 flex flex-wrap gap-3",
+                    reducedMotion
+                      ? "transition-none"
+                      : "transition-[transform,opacity] duration-[1750ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
+                    isActive
+                      ? "translate-x-0 opacity-100 delay-[850ms]"
+                      : isPrevious
+                        ? "translate-x-0 opacity-0"
+                        : `${incomingX} opacity-0`,
+                  ].join(" ")}
+                >
                   <a
                     href={slide.primaryHref}
                     className="inline-flex min-h-12 items-center justify-center bg-[#f5b400] px-7 text-[15px] font-bold text-[#043079] transition hover:bg-[#ffc62f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                   >
                     {slide.primaryLabel}
 
-                    <span aria-hidden="true" className="ml-2">
+                    <span
+                      aria-hidden="true"
+                      className="ml-2"
+                    >
                       →
                     </span>
                   </a>
@@ -368,7 +529,20 @@ export default function HeroSlider() {
                   </a>
                 </div>
 
-                <div className="mt-7 flex flex-wrap gap-x-6 gap-y-3">
+                {/* TAGS */}
+                <div
+                  className={[
+                    "mt-7 flex flex-wrap gap-x-6 gap-y-3",
+                    reducedMotion
+                      ? "transition-none"
+                      : "transition-[transform,opacity] duration-[1700ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
+                    isActive
+                      ? "translate-x-0 opacity-100 delay-[1000ms]"
+                      : isPrevious
+                        ? "translate-x-0 opacity-0"
+                        : `${incomingX} opacity-0`,
+                  ].join(" ")}
+                >
                   {slide.tags.map((tag) => (
                     <span
                       key={tag}
@@ -387,7 +561,19 @@ export default function HeroSlider() {
             </div>
 
             {/* MOBILE CTA ROW */}
-            <div className="absolute bottom-[82px] left-5 right-5 z-30 grid grid-cols-2 gap-2 md:hidden">
+            <div
+              className={[
+                "absolute bottom-[82px] left-5 right-5 z-30 grid grid-cols-2 gap-2 md:hidden",
+                reducedMotion
+                  ? "transition-none"
+                  : "transition-[transform,opacity] duration-[1750ms] ease-[cubic-bezier(0.45,0,0.55,1)]",
+                isActive
+                  ? "translate-y-0 opacity-100 delay-[850ms]"
+                  : isPrevious
+                    ? "translate-y-0 opacity-0"
+                    : "translate-y-3 opacity-0",
+              ].join(" ")}
+            >
               <a
                 href={slide.primaryHref}
                 className="inline-flex min-h-11 items-center justify-center bg-[#f5b400] px-3 text-center text-[11px] font-bold text-[#043079] transition hover:bg-[#ffc62f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
@@ -413,7 +599,10 @@ export default function HeroSlider() {
         aria-label="Show previous hero slide"
         className="absolute left-5 top-1/2 z-30 hidden h-12 w-12 -translate-y-1/2 place-items-center border border-white/55 bg-[#043079]/48 text-white transition hover:border-[#f5b400] hover:bg-[#f5b400] hover:text-[#043079] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white md:grid"
       >
-        <ChevronLeft aria-hidden="true" className="h-6 w-6" />
+        <ChevronLeft
+          aria-hidden="true"
+          className="h-6 w-6"
+        />
       </button>
 
       <button
@@ -422,7 +611,10 @@ export default function HeroSlider() {
         aria-label="Show next hero slide"
         className="absolute right-5 top-1/2 z-30 hidden h-12 w-12 -translate-y-1/2 place-items-center border border-white/55 bg-[#043079]/48 text-white transition hover:border-[#f5b400] hover:bg-[#f5b400] hover:text-[#043079] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white md:grid"
       >
-        <ChevronRight aria-hidden="true" className="h-6 w-6" />
+        <ChevronRight
+          aria-hidden="true"
+          className="h-6 w-6"
+        />
       </button>
 
       {/* SLIDE INDICATORS */}
@@ -434,9 +626,15 @@ export default function HeroSlider() {
             <button
               key={slide.id}
               type="button"
-              onClick={() => handleIndicator(index)}
-              aria-label={`Show hero slide ${index + 1}`}
-              aria-current={isActive ? "true" : undefined}
+              onClick={() =>
+                handleIndicator(index)
+              }
+              aria-label={`Show hero slide ${
+                index + 1
+              }`}
+              aria-current={
+                isActive ? "true" : undefined
+              }
               className={[
                 "h-[4px] transition-all duration-500",
                 isActive

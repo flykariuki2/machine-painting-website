@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { Nunito_Sans } from "next/font/google";
 
 import "./globals.css";
-import SiteFooter from "@/components/SiteFooter";
-import FloatingWhatsApp from "@/components/FloatingWhatsApp";
-import MachineChatbot from "@/components/MachineChatbot";
+import SiteExtras from "@/components/SiteExtras";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
@@ -107,9 +105,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${nunitoSans.className} antialiased`}>
         {children}
-        <SiteFooter />
-        <FloatingWhatsApp />
-        <MachineChatbot />
+        <SiteExtras />
       </body>
     </html>
   );
