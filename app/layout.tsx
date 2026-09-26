@@ -3,6 +3,7 @@ import { Nunito_Sans } from "next/font/google";
 
 import "./globals.css";
 import SiteExtras from "@/components/SiteExtras";
+import Script from "next/script";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
@@ -11,7 +12,7 @@ const nunitoSans = Nunito_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://themachinepainting.com"),
+  metadataBase: new URL("https://themachinepainting.co.ke"),
 
   title: {
     default:
@@ -54,7 +55,7 @@ export const metadata: Metadata = {
       "The Machine Painting Co Ltd | Beautiful Structures, Sprayed Perfectly",
     description:
       "Professional spray painting, wall finishing, commercial painting, renovation painting, and surface preparation services for homes, offices, apartments, buildings, warehouses, and projects.",
-    url: "https://themachinepainting.com",
+    url: "https://themachinepainting.co.ke",
     siteName: "The Machine Painting Co Ltd",
     images: [
       {
@@ -106,6 +107,21 @@ export default function RootLayout({
       <body className={`${nunitoSans.className} antialiased`}>
         {children}
         <SiteExtras />
+
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-7SCS6LSCXP"
+          strategy="afterInteractive"
+        />
+
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-7SCS6LSCXP');
+          `}
+        </Script>
       </body>
     </html>
   );
