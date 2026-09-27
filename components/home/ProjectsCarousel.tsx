@@ -97,37 +97,6 @@ export default function ProjectsCarousel({
 
   return (
     <div className="relative mt-10 md:mt-12">
-      {/* DESKTOP VIEWPORT-EDGE ARROWS */}
-      <button
-        type="button"
-        onClick={() => move("left")}
-        aria-label="View previous projects"
-        disabled={!canScrollLeft}
-        className={[
-          "fixed left-4 top-1/2 z-30 hidden h-12 w-12 -translate-y-1/2 place-items-center border border-[#043079]/20 bg-white/95 text-[#043079] shadow-[0_10px_30px_rgba(4,48,121,0.14)] backdrop-blur-sm transition md:grid",
-          canScrollLeft
-            ? "opacity-100 hover:border-[#043079] hover:bg-[#043079] hover:text-white"
-            : "pointer-events-none opacity-0",
-        ].join(" ")}
-      >
-        <ChevronLeft className="h-5 w-5" />
-      </button>
-
-      <button
-        type="button"
-        onClick={() => move("right")}
-        aria-label="View more projects"
-        disabled={!canScrollRight}
-        className={[
-          "fixed right-4 top-1/2 z-30 hidden h-12 w-12 -translate-y-1/2 place-items-center border border-[#043079]/20 bg-white/95 text-[#043079] shadow-[0_10px_30px_rgba(4,48,121,0.14)] backdrop-blur-sm transition md:grid",
-          canScrollRight
-            ? "opacity-100 hover:border-[#043079] hover:bg-[#043079] hover:text-white"
-            : "pointer-events-none opacity-0",
-        ].join(" ")}
-      >
-        <ChevronRight className="h-5 w-5" />
-      </button>
-
       {/* CAROUSEL */}
       <div className="relative">
         <div
@@ -178,7 +147,10 @@ export default function ProjectsCarousel({
               : "pointer-events-none opacity-0",
           ].join(" ")}
         >
-          <ChevronLeft className="h-5 w-5" />
+          <ChevronLeft
+            aria-hidden="true"
+            className="h-5 w-5"
+          />
         </button>
 
         {/* MOBILE RIGHT EDGE CONTROL */}
@@ -194,7 +166,10 @@ export default function ProjectsCarousel({
               : "pointer-events-none opacity-0",
           ].join(" ")}
         >
-          <ChevronRight className="h-5 w-5" />
+          <ChevronRight
+            aria-hidden="true"
+            className="h-5 w-5"
+          />
         </button>
 
         {/* MOBILE EDGE HINT */}
@@ -203,7 +178,7 @@ export default function ProjectsCarousel({
         )}
       </div>
 
-      {/* SUBTLE MOBILE SWIPE HINT */}
+      {/* MOBILE SWIPE HINT */}
       <div className="mt-3 flex items-center justify-center gap-2 md:hidden">
         <span className="h-1 w-1 rounded-full bg-[#f5b400]" />
 
@@ -211,7 +186,10 @@ export default function ProjectsCarousel({
           Swipe to explore more projects
         </p>
 
-        <ChevronRight className="h-3.5 w-3.5 text-[#043079]/45" />
+        <ChevronRight
+          aria-hidden="true"
+          className="h-3.5 w-3.5 text-[#043079]/45"
+        />
       </div>
     </div>
   );

@@ -6,15 +6,78 @@ const whatsappMessage = encodeURIComponent(
 );
 
 const whatsappLink = `https://wa.me/254785285828?text=${whatsappMessage}`;
+const facebookLink = "https://web.facebook.com/profile.php?id=100090852834284";
+const instagramLink = "https://www.instagram.com/the_machine_painting_kenya/";
+const youtubeLink = "https://www.youtube.com/@themachinepaintingcompany";
+const twitterLink = "https://x.com/TheMachinePaint";
 
-const facebookLink =
-  "https://web.facebook.com/profile.php?id=100090852834284";
+// Inline SVGs for social media to prevent lucide-react brand icon build errors
+const YoutubeIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0" />
+    <path d="m10 15 5-3-5-3z" />
+  </svg>
+);
 
-const instagramLink =
-  "https://www.instagram.com/the_machine_painting_kenya/";
+const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+  </svg>
+);
 
-const youtubeLink =
-  "https://www.youtube.com/@themachinepaintingcompany";
+const TwitterIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    {...props}
+  >
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+
+const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
 
 export default function SiteFooter() {
   return (
@@ -23,6 +86,7 @@ export default function SiteFooter() {
       className="border-t border-white/5 bg-[#043079] px-5 pt-12 text-white md:px-8"
     >
       <div className="mx-auto grid max-w-7xl gap-8 border-b border-white/10 pb-9 lg:grid-cols-[1.05fr_1fr_0.85fr_0.85fr]">
+        {/* Column 1: Brand */}
         <div>
           <div className="inline-flex rounded-sm bg-white p-3">
             <Image
@@ -74,6 +138,7 @@ export default function SiteFooter() {
           </div>
         </div>
 
+        {/* Column 2: Contact */}
         <div>
           <h4 className="mb-5 text-[10px] font-extrabold uppercase tracking-[0.3em] text-[#f5b400]">
             Contact
@@ -83,9 +148,7 @@ export default function SiteFooter() {
             <p>
               <span className="font-extrabold text-white">Head Office:</span>
               <br />
-              Kasuku Villas
-              <br />
-              Umoja Road off Magadi Road
+              Clara Villas, 4th Avenue off Magadi Rd,
               <br />
               Nairobi, Kenya
             </p>
@@ -99,7 +162,6 @@ export default function SiteFooter() {
               >
                 WhatsApp: 0785 285 828
               </a>
-
               <br />
 
               <a
@@ -108,7 +170,6 @@ export default function SiteFooter() {
               >
                 Call: 0785 285 828
               </a>
-
               <br />
 
               <a
@@ -117,7 +178,6 @@ export default function SiteFooter() {
               >
                 Tel: +254 719 383 020
               </a>
-
               <br />
 
               <a
@@ -130,22 +190,16 @@ export default function SiteFooter() {
 
             <p>
               <a
-                href="mailto:info@themachinepainting.com"
+                href="mailto:themachinepaintingcoltd@gmail.com"
                 className="block break-all font-extrabold text-white transition-colors hover:text-[#f5b400]"
               >
-                info@themachinepainting.com
-              </a>
-
-              <a
-                href="mailto:themachinepainting@gmail.com"
-                className="block break-all transition-colors hover:text-[#f5b400]"
-              >
-                cc: themachinepainting@gmail.com
+                themachinepaintingcoltd@gmail.com
               </a>
             </p>
           </div>
         </div>
 
+        {/* Column 3: Company */}
         <div>
           <h4 className="mb-5 text-[10px] font-extrabold uppercase tracking-[0.3em] text-[#f5b400]">
             Company
@@ -208,7 +262,7 @@ export default function SiteFooter() {
               className="block transition-colors hover:text-[#f5b400]"
               href="/careers"
             >
-              Join Us
+              Join Us (Careers)
             </Link>
 
             <Link
@@ -220,44 +274,51 @@ export default function SiteFooter() {
           </nav>
         </div>
 
+        {/* Column 4: Social Media & Legal */}
         <div>
           <h4 className="mb-5 text-[10px] font-extrabold uppercase tracking-[0.3em] text-[#f5b400]">
             Social Media
           </h4>
 
-          <div className="space-y-2.5 text-[13px] text-slate-200">
+          <div className="space-y-3 text-[13px] text-slate-200">
             <a
-              className="block transition-colors hover:text-[#f5b400]"
+              className="flex items-center gap-3 transition-colors hover:text-[#f5b400]"
               href={youtubeLink}
               target="_blank"
               rel="noreferrer"
             >
-              YouTube: The Machine Painting Co Ltd
+              <YoutubeIcon className="flex-shrink-0" />
+              <span>YouTube: The Machine Painting Co Ltd</span>
             </a>
 
             <a
-              className="block transition-colors hover:text-[#f5b400]"
+              className="flex items-center gap-3 transition-colors hover:text-[#f5b400]"
               href={facebookLink}
               target="_blank"
               rel="noreferrer"
             >
-              Facebook: The Machine Painting Co Ltd
+              <FacebookIcon className="flex-shrink-0" />
+              <span>Facebook: The Machine Painting Co Ltd</span>
             </a>
 
-            <p>
-              Twitter/X:{" "}
-              <span className="font-semibold text-white">
-                @TheMachinePaint
-              </span>
-            </p>
+            <a
+              className="flex items-center gap-3 transition-colors hover:text-[#f5b400]"
+              href={twitterLink}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <TwitterIcon className="flex-shrink-0" />
+              <span>Twitter/X: @TheMachinePaint</span>
+            </a>
 
             <a
-              className="block transition-colors hover:text-[#f5b400]"
+              className="flex items-center gap-3 transition-colors hover:text-[#f5b400]"
               href={instagramLink}
               target="_blank"
               rel="noreferrer"
             >
-              Instagram: the_machine_painting_kenya
+              <InstagramIcon className="flex-shrink-0" />
+              <span>Instagram: the_machine_painting_kenya</span>
             </a>
           </div>
 
@@ -280,8 +341,8 @@ export default function SiteFooter() {
       </div>
 
       <div className="mx-auto max-w-7xl py-4 text-[11px] text-slate-400">
-        © 2026 The Machine Painting Co Ltd. Beautiful Structures, Sprayed
-        Perfectly.
+        © {new Date().getFullYear()} The Machine Painting Co Ltd. Beautiful
+        Structures, Sprayed Perfectly.
       </div>
     </footer>
   );
