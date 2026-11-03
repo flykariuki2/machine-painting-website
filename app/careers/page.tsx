@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { CheckCircle2 } from "lucide-react";
 import { FormEvent, useRef, useState } from "react";
@@ -104,7 +104,7 @@ export default function CareersPage() {
     setFeedback("");
 
     try {
-      await submitPainterApplication({
+      const application = {
         full_name: fullName.trim(),
         age: parsedAge,
         county: county.trim(),
@@ -118,7 +118,25 @@ export default function CareersPage() {
           sprayExperience === "yes" ? true : sprayExperience === "no" ? false : null,
         message: message.trim() || null,
         source: "careers_form",
-      });
+      };
+
+      // Save the application first.
+      await submitPainterApplication(application);
+
+      // Send an email notification without affecting the saved application.
+      try {
+        const notificationResponse = await fetch("/api/careers", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(application),
+        });
+
+        if (!notificationResponse.ok) {
+          console.warn("Application saved, but email notification failed.");
+        }
+      } catch (notificationError) {
+        console.warn("Application saved, but email notification could not be sent:", notificationError);
+      }
       lastSubmission.current = Date.now();
       setApplicationSent(true);
       setFeedback("Application received. Thank you for your interest in joining The Machine Painting Co Ltd painter network.");

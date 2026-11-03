@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { CheckCircle2, MessageCircle, MapPin, Mail } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -162,7 +162,7 @@ export default function ContactSection({ whatsappMessage }: ContactSectionProps)
       lastSubmission.current = Date.now();
       setSavedWhatsappLink(formWhatsappLink);
       setFormState("success");
-      setFeedback("Thank you. Your request has been received and routed to themachinepaintingcoltd@gmail.com. Our team will contact you shortly.");
+      setFeedback("Thank you. Your request has been received. Our team will contact you shortly.");
     } catch {
       setFormState("error");
       setFeedback("We could not process your request. Please try again or contact us directly on WhatsApp.");
@@ -180,16 +180,16 @@ export default function ContactSection({ whatsappMessage }: ContactSectionProps)
       <section className="section-shell bg-white">
         <div className="site-container relative overflow-hidden bg-[#043079] px-5 py-10 text-white shadow-[0_28px_80px_rgba(4,48,121,.18)] sm:px-6 md:px-10 md:py-12 lg:px-12">
           <div className="relative z-10 grid gap-8 lg:grid-cols-[0.78fr_1.22fr] lg:items-center lg:gap-10">
-            
+
             {/* Left Column: Info */}
             <div>
               <p className="mb-4 text-[10px] font-extrabold uppercase tracking-[0.26em] text-[#f5b400]">Project Request</p>
               <h2 className="max-w-lg text-[30px] font-extrabold leading-tight tracking-[-0.045em] text-white md:text-[33px]">Request a Quotation or Book a Site Visit</h2>
               <p className="mt-4 max-w-lg text-[14px] leading-6 text-slate-200/90 md:mt-5 md:text-[15px] md:leading-7">
-                Tell us what you need and where the project is located. All client submissions, quotations, site visits, and general inquiries are securely routed to{" "}
-                <span className="font-semibold text-[#f5b400]">themachinepaintingcoltd@gmail.com</span>. We will review the details and contact you shortly.
+                Tell us what you need and where the project is located.
+                We will review the details and contact you shortly.
               </p>
-              
+
               <div className="mt-6 space-y-4">
                 <div className="flex items-start gap-3 text-slate-200/90">
                   <MapPin className="mt-1 h-5 w-5 flex-shrink-0 text-[#f5b400]" />
@@ -249,7 +249,7 @@ export default function ContactSection({ whatsappMessage }: ContactSectionProps)
                   <label className={`${labelClass} mt-4`}>Short Project Description <textarea value={details} onChange={(event) => setDetails(event.target.value)} placeholder="Briefly describe the project, wall condition, size, or preferred timeline..." className="min-h-[96px] w-full resize-y border border-[#043079]/20 bg-white px-3.5 py-3 text-sm text-slate-900 outline-none transition focus:border-[#f5b400] focus:ring-4 focus:ring-[#f5b400]/10" /></label>
                   {formState === "error" && <p aria-live="polite" className="mt-4 border-l-4 border-[#cc0f06] bg-[#cc0f06]/[.05] px-4 py-3 text-sm font-semibold leading-5 text-[#a70d06]">{feedback}</p>}
                   <button type="submit" disabled={submitting} className="mt-5 inline-flex min-h-12 w-full items-center justify-center bg-[#043079] px-6 text-xs font-extrabold uppercase tracking-[0.12em] text-white transition hover:bg-[#f5b400] hover:text-[#043079] disabled:cursor-not-allowed disabled:opacity-60">{submitting ? "Submitting request..." : "Submit Request"}</button>
-                  <p className="mt-3 text-center text-[11px] leading-5 text-slate-500">Your request is saved securely and forwarded to themachinepaintingcoltd@gmail.com.</p>
+
                 </form>
               )}
             </div>
