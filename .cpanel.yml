@@ -1,0 +1,6 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/ytqmoooy/machinepainting-app/
+    - /bin/cp -R app components lib public $DEPLOYPATH
+    - /bin/cp app.js package.json package-lock.json next.config.ts postcss.config.mjs tailwind.config.ts tsconfig.json proxy.ts eslint.config.mjs $DEPLOYPATH

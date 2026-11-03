@@ -43,3 +43,6 @@ next-env.d.ts
 
 _gemini_refactor_package/
 _llm_handover/
+
+# Local deployment archive
+/machinepainting-deploy.zip
